@@ -25,7 +25,7 @@ const auth = async (req, res) => {
 
     if (!passwordCorrect) {
         res.json({
-          msg: 'Credenciales incorrectas',
+            msg: 'Credenciales incorrectas',
         });
         return;
     }
@@ -61,9 +61,9 @@ const validarCookieActiva = (req, res) => {
 const cerrarSesion = (req, res)=>{
 
     res.clearCookie('token', {httpOnly:true, expires: new Date(0)} );
-  
+
     res.json({mensaje : "Cerrar Sesion"});
-  
+
 }
 
 export { auth, validarCookieActiva,cerrarSesion }
