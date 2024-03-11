@@ -6,7 +6,7 @@ import { db } from '../database/conn.js';
 
 const auth = async (req, res) => {
     let sql = `SELECT NOMBRE_USUARIO, CONTRASENIA, ID_ROL FROM TBL_USUARIOS WHERE correo = $1`;
-    let params = [req.body.correo];
+    let params = [req.body.correo, req.body.contrasenia];
     let result = await db.query(sql, params);
 
     if(result.length == 0){
@@ -21,7 +21,7 @@ const auth = async (req, res) => {
             });
             return;
         } else {
-            const passwordCorrect = await bcrypt.compare(req.contrasenia, result.rows[0].contrasenia);
+            const passwordCorrect = await bcrypt.compare(req.contrasenia, result[0].contrasenia);
             if (!passwordCorrect) {
                 res.json({
                     msg: 'Credenciales incorrectas',
@@ -29,15 +29,16 @@ const auth = async (req, res) => {
                 return;
             }
             const payload = {
-                idHotel: result.rows[0].id_hotel,
-                correo: result.rows[0].correo,
-                autenticado: result.rows[0].autenticado
+                idHotel: result[0].id_hotel,
+                correo: result[0].correo,
+                autenticado: result[0].autenticado
             };
             generateTokenAndRespond(res, payload, 'Autenticación Exitosa para Hotel');
             return;
         }
     } else {
-        const passwordCorrect = await bcrypt.compare(req.contrasenia, result.rows[0].contrasenia);
+        console.log(result[0]);
+        const passwordCorrect = await bcrypt.compare(req.body.contrasenia, result[0].contrasenia);
         if (!passwordCorrect) {
             res.json({
                 msg: 'Credenciales incorrectas',
@@ -46,8 +47,8 @@ const auth = async (req, res) => {
         }
 
         const payload = {
-            username: result.rows[0].nombre_usuario,
-            rolid: result.rows[0].id_rol
+            username: result[0].nombre_usuario,
+            rolid: result[0].id_rol
         };
         generateTokenAndRespond(res, payload, 'Autenticación Exitosa');
         return;
