@@ -11,7 +11,7 @@ const registrarHotel = async (req, res) =>{
         const sql = `INSERT INTO TBL_HOTELES (ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP , CORREO, CONTRASENIA, AUTENTICADO)
                     VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`;
         
-        const values=[ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP , CORREO, contraseniaHash, AUTENTICADO];
+        const values=[ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP , CORREO, contraseniaHash, false];
         await db.query(sql, values);
         res.json({ message: 'Hotel registrado con éxito' });           
     }catch (error) {
