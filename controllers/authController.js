@@ -5,54 +5,73 @@ import bcrypt from 'bcrypt';
 import { db } from '../database/conn.js';
 
 const auth = async (req, res) => {
-    const params = [
-        req.correo,
-        req.contrasenia
-    ]
+    let sql = `SELECT NOMBRE_USUARIO, CONTRASENIA, ID_ROL FROM TBL_USUARIOS WHERE correo = $1`;
+    let params = [req.body.correo];
+    let result = await db.query(sql, params);
 
-    const sql =`SELECT NOMBRE_USUARIO, CONTRASENIA, ID_ROL FROM TBL_USUARIOS
-                WHERE CORREO =$1`;
-
-    const result = await db.query(sql, params);
     if(result.length == 0){
-        res.json({
-            msg: 'El usuario no existe'
-        });
+        sql = `SELECT ID_HOTEL, CORREO, CONTRASENIA, AUTENTICADO FROM TBL_HOTELES WHERE CORREO = $1`;
+        result = await db.query(sql, params);
+
+        if(result.length == 0) {
+            console.log(result);
+            res.json({
+
+                msg: 'El usuario no existe'
+            });
+            return;
+        } else {
+            const passwordCorrect = await bcrypt.compare(req.contrasenia, result.rows[0].contrasenia);
+            if (!passwordCorrect) {
+                res.json({
+                    msg: 'Credenciales incorrectas',
+                });
+                return;
+            }
+            const payload = {
+                idHotel: result.rows[0].id_hotel,
+                correo: result.rows[0].correo,
+                autenticado: result.rows[0].autenticado
+            };
+            generateTokenAndRespond(res, payload, 'Autenticación Exitosa para Hotel');
+            return;
+        }
+    } else {
+        const passwordCorrect = await bcrypt.compare(req.contrasenia, result.rows[0].contrasenia);
+        if (!passwordCorrect) {
+            res.json({
+                msg: 'Credenciales incorrectas',
+            });
+            return;
+        }
+
+        const payload = {
+            username: result.rows[0].nombre_usuario,
+            rolid: result.rows[0].id_rol
+        };
+        generateTokenAndRespond(res, payload, 'Autenticación Exitosa');
         return;
     }
+};
 
-    const passwordCorrect = await bcrypt.compare(params.contrasenia, result[0].contrasenia);
-
-    if (!passwordCorrect) {
-        res.json({
-            msg: 'Credenciales incorrectas',
-        });
-        return;
-    }
-
-    const payload = {
-        username: result[0].nombre_usuario,
-        rolid: result[0].id_rol
-    };
-
+function generateTokenAndRespond(res, payload, message) {
     const token = jwt.sign(payload, 'secret', { expiresIn: '1d' });
     const tokenCookie = cookie.serialize('token', token, {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-        maxAge: (60 * 60),
+        maxAge: 60 * 60,
         path: '/'
     });
 
     res.setHeader('Set-Cookie', tokenCookie);
     res.json({
-        msg: 'Autenticación Exitosa',
-        user: {
-        nombre_usuario: result[0].nombre_usuario,
-        rolid: result[0].id_rol,
-        }
+        msg: message,
+        user: payload
     });
 }
+
+
 
 const validarCookieActiva = (req, res) => {
     res.json(req.user);
@@ -66,4 +85,4 @@ const cerrarSesion = (req, res)=>{
 
 }
 
-export { auth, validarCookieActiva,cerrarSesion }
+export { auth, validarCookieActiva, cerrarSesion }
