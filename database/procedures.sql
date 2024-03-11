@@ -13,3 +13,20 @@ BEGIN
     VALUES (nombre_usuario_param, id_rol_param, dni_param, correo_param, telefono_param, fecha_nacimiento_param, contrasenia_param);
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE sp_registrar_hotel(
+    ID_DIRECCION_param INTEGER,
+    REFERENCIA_LOCAL_param VARCHAR(100),
+    NOMBRE_param VARCHAR(100),
+    RTN_param VARCHAR(100),
+    NO_TELEFONO_param INTEGER,
+    NO_WHATSAPP_param INTEGER,
+    CORREO_param VARCHAR(100),
+    CONTRASENIA_param VARCHAR(100)
+)
+AS $$
+BEGIN
+    INSERT INTO tbl_hoteles (ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP , CORREO, CONTRASENIA, AUTENTICADO)
+    VALUES (ID_DIRECCION_param, REFERENCIA_LOCAL_param, NOMBRE_param, RTN_param, NO_TELEFONO_param, NO_WHATSAPP_param, CORREO_param, CONTRASENIA_param, false);
+END;
+$$ LANGUAGE plpgsql;

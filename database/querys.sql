@@ -1,3 +1,4 @@
+-- Active: 1709789023717@@127.0.0.1@5432@descanso_nomada
 -- Tabla de Departamentos
 SELECT * FROM TBL_DEPARTAMENTOS;
 
@@ -45,3 +46,5 @@ SELECT * FROM TBL_REDES_SOCIALES;
 
 -- Tabla de Enlaces de Redes Sociales
 SELECT * FROM TBL_ENLACES_REDES_SOCIALES;
+
+DELETE FROM TBL_HOTELES WHERE id_hotel=3
