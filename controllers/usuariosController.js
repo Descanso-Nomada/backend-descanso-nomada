@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
 import { db } from '../database/conn.js';
-import bcrypt from 'bcrypt';
 import { json } from 'express';
 
 const registrarUsuario = async (req, res) => {
