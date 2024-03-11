@@ -1,7 +1,7 @@
 -- Insertar datos en la tabla de roles
-INSERT INTO TBL_ROL (ROL, ESTADO) VALUES
-('ADMIN', true),
-('CLIENTE', true);
+INSERT INTO TBL_ROL (ROL) VALUES
+('ADMIN'),
+('CLIENTE');
 
 -- Insertar datos en la tabla de departamentos
 INSERT INTO TBL_DEPARTAMENTOS (NOMBRE_DEPTO) VALUES
