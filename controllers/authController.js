@@ -31,6 +31,7 @@ const auth = async (req, res) => {
             const payload = {
                 idHotel: result[0].id_hotel,
                 correo: result[0].correo,
+                rolid:3,
                 autenticado: result[0].autenticado
             };
             generateTokenAndRespond(res, payload, 'Autenticación Exitosa para Hotel');
@@ -45,7 +46,6 @@ const auth = async (req, res) => {
             });
             return;
         }
-
         const payload = {
             username: result[0].nombre_usuario,
             rolid: result[0].id_rol
