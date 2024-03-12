@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { db } from '../database/conn.js';
 
+
 const registrarHotel = async (req, res) =>{
     const {ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP , CORREO, CONTRASENIA} =req.body;
     
@@ -21,6 +22,52 @@ const registrarHotel = async (req, res) =>{
     }
 }
 
+
+const borrarHotel = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const result = await db.query('CALL sp_borrar_hotel($1)', [id]);
+        
+        res.json({ message: 'Hotel borrado exitosamente' });
+    } catch (error) {
+        console.error('Error al borrar el hotel:', error);
+        res.status(500).json({ error: 'Error al borrar el hotel' });
+    }
+}
+
+const mostrarHoteles = async (req, res) => {
+    try {
+        const query = `
+                    SELECT  A.ID_HOTEL, 
+                    A.ID_DIRECCION, 
+                    CONCAT(B.NOMBRE_COLONIA, ', ', C.NOMBRE_CIUDAD, ', ', D.NOMBRE_MUNICIPIO, ', ', E.NOMBRE_DEPTO) AS DIRECCION_COMPLETA,
+                    A.REFERENCIA_LOCAL,
+                    A.NOMBRE, 
+                    A.RTN, 
+                    A.NO_TELEFONO, 
+                    A.NO_WHATSAPP , 
+                    A.CORREO 
+            FROM TBL_HOTELES AS A
+            INNER JOIN TBL_COLONIAS AS B ON A.ID_DIRECCION = B.ID_COLONIA
+            INNER JOIN TBL_CIUDADES AS C ON C.ID_CIUDAD = B.ID_CIUDAD
+            INNER JOIN TBL_MUNICIPIOS AS D ON D.ID_MUNICIPIO = C.ID_MUNICIPIO
+            INNER JOIN TBL_DEPARTAMENTOS AS E ON E.ID_DEPTO = D.ID_DEPTO;
+        `;
+        const result = await db.query(query);
+
+        const data = result[0];
+
+        res.json(data);
+    } catch (error) {
+        console.error('Error al mostrar hoteles:', error);
+        res.status(500).json({ error: 'Error al mostrar hoteles' });
+    }
+};
+
+
 export{
-    registrarHotel
+    registrarHotel,
+    borrarHotel,
+    mostrarHoteles
 };

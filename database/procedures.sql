@@ -30,3 +30,17 @@ BEGIN
     VALUES (ID_DIRECCION_param, REFERENCIA_LOCAL_param, NOMBRE_param, RTN_param, NO_TELEFONO_param, NO_WHATSAPP_param, CORREO_param, CONTRASENIA_param, false);
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE sp_borrar_hotel(ID_HOTEL_param INTEGER)
+AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM tbl_hoteles WHERE ID_HOTEL = ID_HOTEL_param) THEN
+        DELETE FROM tbl_hoteles WHERE ID_HOTEL = ID_HOTEL_param;
+        RAISE NOTICE 'Hotel borrado exitosamente';
+    ELSE
+        RAISE EXCEPTION 'El hotel con ID % no existe', ID_HOTEL_param;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+

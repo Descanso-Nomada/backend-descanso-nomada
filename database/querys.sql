@@ -48,3 +48,9 @@ SELECT * FROM TBL_REDES_SOCIALES;
 SELECT * FROM TBL_ENLACES_REDES_SOCIALES;
 
 DELETE FROM TBL_HOTELES WHERE id_hotel=3
+
+CALL sp_borrar_hotel(4);
+
+CALL sp_mostrar_hoteles()
+
+
