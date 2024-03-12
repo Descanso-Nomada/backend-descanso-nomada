@@ -4,7 +4,7 @@ import {registrarUsuario, obtenerUsuarioporId, eliminarUsuario, actualizarContra
 import { validarCookie } from '../helpers/helpersCookie.js';
 
 //registrar un usuario nuevo
-apiUsuarios.post('', registrarUsuario);
+apiUsuarios.post('/registro', registrarUsuario);
 apiUsuarios.get('/:id',validarCookie,obtenerUsuarioporId);
 apiUsuarios.put('',validarCookie,actualizarContrasenia);
 apiUsuarios.delete('/:id',validarCookie,eliminarUsuario);
