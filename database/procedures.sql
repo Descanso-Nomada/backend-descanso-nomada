@@ -1,3 +1,4 @@
+-- Active: 1709788980542@@localhost@5432@descanso_nomada
 CREATE OR REPLACE PROCEDURE sp_registrar_usuario(
     nombre_usuario_param VARCHAR(255),
     id_rol_param INT,
@@ -42,5 +43,3 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
-
-

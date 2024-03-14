@@ -8,6 +8,8 @@ import { apiAuth } from "./routes/apiAuth.js";
 import { apiDepartamentos } from "./routes/apiDepartamentos.js";
 import { apiMunicipios } from "./routes/apiMunicipios.js";
 import { apiCiudades } from "./routes/apiCiudades.js";
+import { apiHabitaciones } from "./routes/apiHabitaciones.js";
+import { apiImagenes } from "./routes/apiImagenes.js";
 
 app.use(express.json());
 app.use(cookieParser());
@@ -23,6 +25,9 @@ app.use('/api/auth',apiAuth);
 app.use('/api/departamentos',apiDepartamentos);
 app.use('/api/municipios',apiMunicipios)
 app.use('/api/ciudades', apiCiudades);
+app.use('/api/habitaciones', apiHabitaciones);
+app.use('/api/imagenes',apiImagenes);
+
 app.use(express.static('public'));
 
 app.listen(3000, ()=>{

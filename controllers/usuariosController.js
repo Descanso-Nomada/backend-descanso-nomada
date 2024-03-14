@@ -19,6 +19,15 @@ const registrarUsuario = async (req, res) => {
         res.status(500).json({ error: 'Error al registrar el usuario' });
     }
 }
+const listarClientes = async (req, res) =>{
+    try {
+        const result = await db.query(' ID_USUARIO, NOMBRE_USUARIO, DNI, CORREO, TELEFONO FROM TBL_USUARIOS WHERE ID_ROL = 2')
+        res.json(result[0])
+    }catch{ 
+        console.error('Error al obtener usuarios:', error);
+        res.status(500).json({ error: 'Error al obtener usuarios' });
+    }
+}
 
 const obtenerUsuarioporId = async (req, res) =>{
     const values=[req.params.id_usario];
@@ -98,5 +107,6 @@ export {
     registrarUsuario,
     obtenerUsuarioporId,
     eliminarUsuario,
-    actualizarContrasenia
+    actualizarContrasenia,
+    listarClientes
 };

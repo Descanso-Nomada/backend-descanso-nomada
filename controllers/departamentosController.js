@@ -11,7 +11,6 @@ const obtenerDepartamentos = async (req, res) =>{
     }
 };
 
-
 export{
     obtenerDepartamentos
 }

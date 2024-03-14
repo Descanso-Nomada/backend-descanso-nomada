@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import { db } from '../database/conn.js';
+import { json } from 'express';
 
 
 const registrarHotel = async (req, res) =>{
@@ -36,6 +37,38 @@ const borrarHotel = async (req, res) => {
     }
 }
 
+const hotelesInactivos = async (req, res) =>{
+    try {
+        const sql =`SELECT * FROM TBL_HOTELES WHERE AUTENTICADO == FALSE`;
+        const result = await db.query(sql);
+        res.json(result)
+    } catch (error) {
+        console.error('Error al listar los hoteles:', error);
+        res.status(500).json({ error: 'Error al listar los hoteles' });
+    }
+}
+
+const cambiarEstadoHotel = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const sql = 'SELECT * FROM cambiarEstadoHotel($1)';
+        const result = await client.query(sql, [id]);
+
+        if (result.length > 0) {
+            res.send({
+                mensaje: "Estado del hotel actualizado exitosamente.",
+                datos: result[0]
+            });
+        } else {
+            res.status(404).send({ mensaje: "Hotel no encontrado." });
+        }
+    } catch (error) {
+        console.error("Error al cambiar el estado de autenticado del hotel: ", error);
+        res.status(500).send({ mensaje: "Error al procesar la solicitud." });
+    }
+};
+
+
 const mostrarHoteles = async (req, res) => {
     try {
         const query = `
@@ -69,5 +102,8 @@ const mostrarHoteles = async (req, res) => {
 export{
     registrarHotel,
     borrarHotel,
-    mostrarHoteles
+    mostrarHoteles,
+    hotelesInactivos,
+    cambiarEstadoHotel
+
 };
