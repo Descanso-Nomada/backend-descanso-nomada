@@ -13,6 +13,7 @@ const registrarHotel = async (req, res) =>{
         const sql = `CALL sp_registrar_hotel($1, $2, $3, $4, $5, $6, $7, $8)`;
         
         const values=[ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP , CORREO, contraseniaHash, false];
+        console.log(values);
         await db.query(sql, values);
         res.json({ message: 'Hotel registrado con éxito' });           
     }catch (error) {
@@ -89,7 +90,7 @@ const mostrarHoteles = async (req, res) => {
         `;
         const result = await db.query(query);
 
-        const data = result[0];
+        const data = result;
 
         res.json(data);
     } catch (error) {
