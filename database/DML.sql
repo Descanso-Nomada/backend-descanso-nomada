@@ -210,4 +210,12 @@ VALUES
     ('Javier Ramírez', 2, '0506198912345', 'javierramirez@example.com', '50499991242', '1989-06-05', 'contraseña9'),
     ('Elena González', 2, '0607199212345', 'elenagonzalez@example.com', '50499991243', '1992-07-06', 'contraseña10');
 
+INSERT INTO TBL_HOTELES (ID_HOTEL, ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP, CORREO, CONTRASENIA, AUTENTICADO)
+VALUES
+    (1, 1, 'Referencia Local 1', 'Hotel Honduras Maya', 'RTN12345678901234', 22345678, 99991234, 'hotel1@example.com', 'contraseña1', false),
+    (6, 2, 'Referencia Local 2', 'Hotel Real Intercontinental', 'RTN23456789012345', 22345679, 99991235, 'hotel2@example.com', 'contraseña2', false),
+    (3, 3, 'Referencia Local 3', 'Hotel Marriott Tegucigalpa', 'RTN34567890123456', 22345680, 99991236, 'hotel3@example.com', 'contraseña3', false),
+    (4, 4, 'Referencia Local 4', 'Hotel Clarion', 'RTN45678901234567', 22345681, 99991237, 'hotel4@example.com', 'contraseña4', false),
+    (5, 5, 'Referencia Local 5', 'Hotel Plaza Juan Carlos', 'RTN56789012345678', 22345682, 99991238, 'hotel5@example.com', 'contraseña5', false);
+
 
