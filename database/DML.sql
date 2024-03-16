@@ -196,3 +196,18 @@ INSERT INTO TBL_COLONIAS (ID_CIUDAD, NOMBRE_COLONIA, LATITUD, LONGITUD) VALUES
 (5, 'Colonia Los Pinos', 13.3035, -87.1905),
 (5, 'Residencial Brisas del Sur', 13.2987, -87.1964);
 
+-- Insertar datos en la tabla TBL_USUARIOS
+INSERT INTO TBL_USUARIOS (NOMBRE_USUARIO, ID_ROL, DNI, CORREO, TELEFONO, FECHA_NACIMIENTO, CONTRASENIA)
+VALUES
+    ('Juan Pérez', 1, '0801199600123', 'juanperez@example.com', '50499991234', '1996-01-08', 'contraseña1'),
+    ('María Gómez', 2, '0910199312345', 'mariagomez@example.com', '50499991235', '1993-10-09', 'contraseña2'),
+    ('Carlos López', 1, '1011198712345', 'carloslopez@example.com', '50499991236', '1987-11-10', 'contraseña3'),
+    ('Ana Martínez', 2, '1122198912345', 'anamartinez@example.com', '50499991237', '1989-11-22', 'contraseña4'),
+    ('Pedro Hernández', 2, '1225199512345', 'pedrohernandez@example.com', '50499991238', '1995-12-25', 'contraseña5'),
+    ('Luisa Rodríguez', 1, '0203198812345', 'luisarodriguez@example.com', '50499991239', '1988-03-02', 'contraseña6'),
+    ('Ricardo Flores', 2, '0304199412345', 'ricardoflores@example.com', '50499991240', '1994-04-03', 'contraseña7'),
+    ('Marta Sánchez', 1, '0405199012345', 'martasanchez@example.com', '50499991241', '1990-05-04', 'contraseña8'),
+    ('Javier Ramírez', 2, '0506198912345', 'javierramirez@example.com', '50499991242', '1989-06-05', 'contraseña9'),
+    ('Elena González', 2, '0607199212345', 'elenagonzalez@example.com', '50499991243', '1992-07-06', 'contraseña10');
+
+

@@ -86,7 +86,8 @@ const mostrarHoteles = async (req, res) => {
             INNER JOIN TBL_COLONIAS AS B ON A.ID_DIRECCION = B.ID_COLONIA
             INNER JOIN TBL_CIUDADES AS C ON C.ID_CIUDAD = B.ID_CIUDAD
             INNER JOIN TBL_MUNICIPIOS AS D ON D.ID_MUNICIPIO = C.ID_MUNICIPIO
-            INNER JOIN TBL_DEPARTAMENTOS AS E ON E.ID_DEPTO = D.ID_DEPTO;
+            INNER JOIN TBL_DEPARTAMENTOS AS E ON E.ID_DEPTO = D.ID_DEPTO
+            WHERE A.AUTENTICADO = TRUE;
         `;
         const result = await db.query(query);
 
