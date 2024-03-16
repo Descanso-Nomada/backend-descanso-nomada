@@ -54,3 +54,6 @@ CALL sp_borrar_hotel(4);
 CALL sp_mostrar_hoteles()
 
 
+UPDATE TBL_HOTELES
+        SET AUTENTICADO = false
+        WHERE ID_HOTEL = 1;
