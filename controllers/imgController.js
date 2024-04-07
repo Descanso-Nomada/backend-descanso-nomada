@@ -64,8 +64,8 @@ const imagenesHotel = async(req, res) =>{
           result: [],
         });
     }
-
 }
+
 const imagenesHabitacion = async(req, res) =>{
     const id= req.body.hotel_id;
     try {

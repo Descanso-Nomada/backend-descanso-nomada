@@ -70,21 +70,40 @@ const cambiarEstadoHotel = async (req, res) => {
 const mostrarHoteles = async (req, res) => {
     try {
         const query = `
-                    SELECT  A.ID_HOTEL, 
-                    A.ID_DIRECCION, 
-                    CONCAT(B.NOMBRE_COLONIA, ', ', C.NOMBRE_CIUDAD, ', ', D.NOMBRE_MUNICIPIO, ', ', E.NOMBRE_DEPTO) AS DIRECCION_COMPLETA,
-                    A.REFERENCIA_LOCAL,
-                    A.NOMBRE, 
-                    A.RTN, 
-                    A.NO_TELEFONO, 
-                    A.NO_WHATSAPP , 
-                    A.CORREO 
-            FROM TBL_HOTELES AS A
-            INNER JOIN TBL_COLONIAS AS B ON A.ID_DIRECCION = B.ID_COLONIA
-            INNER JOIN TBL_CIUDADES AS C ON C.ID_CIUDAD = B.ID_CIUDAD
-            INNER JOIN TBL_MUNICIPIOS AS D ON D.ID_MUNICIPIO = C.ID_MUNICIPIO
-            INNER JOIN TBL_DEPARTAMENTOS AS E ON E.ID_DEPTO = D.ID_DEPTO
-            WHERE A.AUTENTICADO = TRUE;
+            SELECT  
+                H.ID_HOTEL, 
+                H.ID_DIRECCION, 
+                CONCAT(COL.NOMBRE_COLONIA, ', ', CIU.NOMBRE_CIUDAD, ', ', MUN.NOMBRE_MUNICIPIO, ', ', DEP.NOMBRE_DEPTO) AS DIRECCION_COMPLETA,
+                H.REFERENCIA_LOCAL,
+                H.NOMBRE, 
+                H.RTN, 
+                H.NO_TELEFONO, 
+                H.NO_WHATSAPP, 
+                H.CORREO,
+                LATEST_IMG.ID_IMG_HOTEL,
+                encode(LATEST_IMG.IMAGEN_HOTEL, 'base64') AS IMAGEN_HOTEL,
+                LATEST_IMG.NOMBRE_ARCHIVO,
+                LATEST_IMG.EXTENSION_ARCHIVO
+            FROM TBL_HOTELES AS H
+            INNER JOIN TBL_COLONIAS AS COL ON H.ID_DIRECCION = COL.ID_COLONIA
+            INNER JOIN TBL_CIUDADES AS CIU ON CIU.ID_CIUDAD = COL.ID_CIUDAD
+            INNER JOIN TBL_MUNICIPIOS AS MUN ON MUN.ID_MUNICIPIO = CIU.ID_MUNICIPIO
+            INNER JOIN TBL_DEPARTAMENTOS AS DEP ON DEP.ID_DEPTO = MUN.ID_DEPTO
+            LEFT JOIN (
+                SELECT
+                    IH.ID_HOTEL,
+                    IH.ID_IMG_HOTEL,
+                    IH.IMAGEN_HOTEL,
+                    IH.NOMBRE_ARCHIVO,
+                    IH.EXTENSION_ARCHIVO
+                FROM TBL_IMAGENES_HOTELES IH
+                INNER JOIN (
+                    SELECT ID_HOTEL, MAX(ID_IMG_HOTEL) AS MAX_ID_IMG_HOTEL
+                    FROM TBL_IMAGENES_HOTELES
+                    GROUP BY ID_HOTEL
+                ) AS MAX_IMG ON IH.ID_HOTEL = MAX_IMG.ID_HOTEL AND IH.ID_IMG_HOTEL = MAX_IMG.MAX_ID_IMG_HOTEL
+            ) AS LATEST_IMG ON H.ID_HOTEL = LATEST_IMG.ID_HOTEL
+            WHERE H.AUTENTICADO = TRUE;
         `;
         const result = await db.query(query);
 
@@ -92,8 +111,8 @@ const mostrarHoteles = async (req, res) => {
 
         res.json(data);
     } catch (error) {
-        console.error('Error al mostrar hoteles:', error);
-        res.status(500).json({ error: 'Error al mostrar hoteles' });
+        console.error('Error al mostrar hoteles con imágenes:', error);
+        res.status(500).json({ error: 'Error al mostrar hoteles con imágenes' });
     }
 };
 
@@ -104,5 +123,4 @@ export{
     mostrarHoteles,
     hotelesInactivos,
     cambiarEstadoHotel
-
 };
