@@ -48,7 +48,8 @@ const auth = async (req, res) => {
         }
         const payload = {
             username: result[0].nombre_usuario,
-            rolid: result[0].id_rol
+            rolid: result[0].id_rol,
+            userid: result[0].id_usuario
         };
         generateTokenAndRespond(res, payload, 'Autenticación Exitosa');
         return;
