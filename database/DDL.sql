@@ -1,4 +1,4 @@
--- Active: 1710565912835@@localhost@5432@descanso_nomada@public
+-- Active: 1710177975794@@localhost@5432@descanso_nomada
 DO $$
 BEGIN 
 
@@ -164,7 +164,7 @@ $$;
 
 DROP TABLE tbl_reservaciones;
 
-8CREATE TABLE TBL_RESERVACIONES (
+CREATE TABLE TBL_RESERVACIONES (
     ID_RESERVACION SERIAL PRIMARY KEY,
     ID_HABITACION INT,
     ID_USUARIO INT,

@@ -1,21 +1,32 @@
 import { db } from '../database/conn.js';
 
 const registrarHabitacion = async (req, res) => {
-    const { id_hotel, id_tipo_habitacion, capacidad, descripcion, caracteristicas, precio_noche } = req.body;
-    const data = [id_hotel, true, id_tipo_habitacion, capacidad, descripcion, false, caracteristicas, precio_noche];
+    const { id_tipo_habitacion, capacidad, descripcion, caracteristicas, precio_noche } = req.body;
+    const dataHabitacion = [req.params.id_hotel, true, id_tipo_habitacion, capacidad, descripcion, false, caracteristicas, precio_noche];
 
     try {
-        const sql = 'SELECT registrar_habitacion($1, $2, $3, $4, $5, $6, $7, $8) AS id_habitacion';
-        const result = await db.query(sql, data);
-        res.json({
-            mensaje: "Habitación registrada exitosamente.",
-            id_habitacion: result[0].id_habitacion
+        const sqlHabitacion = 'SELECT registrar_habitacion($1, $2, $3, $4, $5, $6, $7, $8) AS id_habitacion';
+        const resultadoHabitacion = await db.query(sqlHabitacion, dataHabitacion);
+        const id_habitacion = resultadoHabitacion.rows[0].id_habitacion;
+
+        if (req.file) {
+            const { buffer, originalname, mimetype } = req.file;
+            const dataImagen = [id_habitacion, buffer, originalname, mimetype];
+            const sqlImagen = `INSERT INTO TBL_IMAGENES_HABITACIONES (ID_HABITACION, IMAGEN_HABITACION, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO)
+                               VALUES ($1, $2, $3, $4)`;
+            await db.query(sqlImagen, dataImagen);
+        }
+
+        res.status(200).json({
+            mensaje: "Habitación registrada y imagen guardada exitosamente.",
+            id_habitacion
         });
     } catch (error) {
-        console.error("Error al registrar la habitación: ", error);
+        console.error("Error al registrar la habitación o al guardar la imagen: ", error);
         res.status(500).send({ mensaje: "Error al procesar la solicitud." });
     }
 };
+
 
 
 const listarHabitaciones = async(req,res) =>{
