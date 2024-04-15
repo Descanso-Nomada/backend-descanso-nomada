@@ -1,4 +1,4 @@
-import { db } from '../database/conn.js';
+import {db} from "../database/conn.js";
 
 const crearReservacion = async (req, res) =>{
     const params= [req.body.id_habitacion, req.params.userid, req.body.cant_noches, req.body.total, req.body.fecha_entrada, req.body.fecha_salida];

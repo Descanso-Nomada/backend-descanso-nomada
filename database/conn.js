@@ -19,6 +19,6 @@ db.connect()
         console.log(`Error de Conexión ${err}`);
     })
 
-export {
+export{
     db
 };

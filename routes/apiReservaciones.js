@@ -1,6 +1,6 @@
 import Express from 'express';
 const apiReservaciones = Express();
-import {crearReservacion, obtenerReservaciones, reservacionesUsuario, actualizarReservacion, eliminarReservacion} from '../controllers/reservacionesController';
+import {crearReservacion, obtenerReservaciones, reservacionesUsuario, actualizarReservacion, eliminarReservacion} from '../controllers/reservacionesController.js';
 import { validarCookie } from '../helpers/helpersCookie.js';
 
 apiReservaciones.post('/reservar',validarCookie, crearReservacion);
