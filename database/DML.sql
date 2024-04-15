@@ -1,3 +1,4 @@
+-- Active: 1710177975794@@localhost@5432@descanso_nomada
 -- Insertar datos en la tabla de roles
 INSERT INTO TBL_ROL (ROL) VALUES
 ('ADMIN'),
@@ -217,5 +218,27 @@ VALUES
     (3, 3, 'Referencia Local 3', 'Hotel Marriott Tegucigalpa', 'RTN34567890123456', 22345680, 99991236, 'hotel3@example.com', 'contraseña3', false),
     (4, 4, 'Referencia Local 4', 'Hotel Clarion', 'RTN45678901234567', 22345681, 99991237, 'hotel4@example.com', 'contraseña4', false),
     (5, 5, 'Referencia Local 5', 'Hotel Plaza Juan Carlos', 'RTN56789012345678', 22345682, 99991238, 'hotel5@example.com', 'contraseña5', false);
+
+
+
+
+   INSERT INTO TBL_TIPOS_HABITACION (NOMBRE_TIPO)
+    VALUES
+    ('Habitacion Estandar'),
+    ('Habitacion Superior'),
+    ('Habitacion Deluxe'),
+    ('Habitacion Familiar'),
+    ('Suite Junior'),
+    ('Suite'),
+    ('Suite Ejecutiva'),
+    ('Suite Presidencial'),
+    ('Habitacion Doble'),
+    ('Habitacion Triple'),
+    ('Habitacion con Vista al Mar'),
+    ('Habitacion con Vista a la Ciudad'),
+    ('Habitacion Accesible'),
+    ('Habitacion Penthouse');
+
+
 
 

@@ -54,8 +54,33 @@ const eliminarHabitacion = async (req, res) => {
       res.status(500).json({ error: 'Error al eliminar la habitacion' });
     }
 }
+
+const tipoHabitaciones = async (req, res) =>{
+    const sql=`
+        SELECT * FROM TBL_TIPO_HABITACIONES
+    `
+    try {
+        const result = await db.query(sql);
+        if(result > 0){
+            res.json({
+                message:'No se encontro ningun tipo de habitaciones'
+            })
+        }else{
+            res.json({
+                data:result,
+                message:'Exito al obtener los tipos de habitaciones'
+            })
+        }
+    } catch (error) {
+        console.error('Error al obtener los tipos de habitacion', error);
+        res.status(500).json({ error: 'Error al obtener los tipos de habitacion' });
+    }
+}
+
+
 export{
     registrarHabitacion,
     listarHabitaciones,
-    eliminarHabitacion
+    eliminarHabitacion,
+    tipoHabitaciones
 }
