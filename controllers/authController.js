@@ -7,52 +7,63 @@ import { db } from '../database/conn.js';
 const auth = async (req, res) => {
     let sql = `SELECT NOMBRE_USUARIO, CONTRASENIA, ID_ROL FROM TBL_USUARIOS WHERE correo = $1`;
     let params = [req.body.correo, req.body.contrasenia];
-    let result = await db.query(sql, params);
 
-    if(result.length == 0){
-        sql = `SELECT ID_HOTEL, CORREO, CONTRASENIA, AUTENTICADO FROM TBL_HOTELES WHERE CORREO = $1`;
-        result = await db.query(sql, params);
-
-        if(result.length == 0) {
+    try {
+        let result = await db.query(sql, req.body.correo);
+        
+        console.log(result);
+        if(result.length == 0){
+            sql = `SELECT ID_HOTEL, CORREO, CONTRASENIA, AUTENTICADO FROM TBL_HOTELES WHERE CORREO = $1`;
+            result = await db.query(sql, params);
+            
             console.log(result);
-            res.json({
-
-                msg: 'El usuario no existe'
-            });
-            return;
+            if(result.length == 0) {
+                console.log('no es usuario');
+                res.json({
+                    msg: 'El usuario no existe'
+                });
+                return;
+            } else {
+                const passwordCorrect = await bcrypt.compare(req.body.contrasenia, result[0].contrasenia);
+                console.log(passwordCorrect);
+                if (!passwordCorrect) {
+                    res.json({
+                        msg: 'Credenciales incorrectas',
+                    });
+                    console.log("pass no match");
+                    return;
+                }
+                const payload = {
+                    idHotel: result[0].id_hotel,
+                    correo: result[0].correo,
+                    rolid:3,
+                    autenticado: result[0].autenticado
+                };
+                generateTokenAndRespond(res, payload, 'Autenticación Exitosa para Hotel');
+                return;
+            }
         } else {
-            const passwordCorrect = await bcrypt.compare(req.contrasenia, result[0].contrasenia);
+            console.log(result[0]);
+            const passwordCorrect = await bcrypt.compare(req.body.contrasenia, result[0].contrasenia);
             if (!passwordCorrect) {
                 res.json({
                     msg: 'Credenciales incorrectas',
                 });
                 return;
+            }else{
+                const payload = {
+                    username: result[0].nombre_usuario,
+                    rolid: result[0].id_rol,
+                    userid: result[0].id_usuario
+                };
+                generateTokenAndRespond(res, payload, 'Autenticación Exitosa');
+                return;
             }
-            const payload = {
-                idHotel: result[0].id_hotel,
-                correo: result[0].correo,
-                rolid:3,
-                autenticado: result[0].autenticado
-            };
-            generateTokenAndRespond(res, payload, 'Autenticación Exitosa para Hotel');
-            return;
+          
         }
-    } else {
-        console.log(result[0]);
-        const passwordCorrect = await bcrypt.compare(req.body.contrasenia, result[0].contrasenia);
-        if (!passwordCorrect) {
-            res.json({
-                msg: 'Credenciales incorrectas',
-            });
-            return;
-        }
-        const payload = {
-            username: result[0].nombre_usuario,
-            rolid: result[0].id_rol,
-            userid: result[0].id_usuario
-        };
-        generateTokenAndRespond(res, payload, 'Autenticación Exitosa');
-        return;
+    } catch (error) {
+        console.error("Error al autenticar: ", error);
+        res.status(500).send({ mensaje: "Error al procesar la solicitud." });
     }
 };
 

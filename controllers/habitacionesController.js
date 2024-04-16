@@ -2,8 +2,8 @@ import { db } from '../database/conn.js';
 
 const registrarHabitacion = async (req, res) => {
     const { id_tipo_habitacion, capacidad, descripcion, caracteristicas, precio_noche } = req.body;
-    const dataHabitacion = [req.params.id_hotel, true, id_tipo_habitacion, capacidad, descripcion, false, caracteristicas, precio_noche];
-
+    const dataHabitacion = [req.idHotel, true, id_tipo_habitacion, capacidad, descripcion, false, caracteristicas, precio_noche];
+        console.log(dataHabitacion);
     try {
         const sqlHabitacion = 'SELECT registrar_habitacion($1, $2, $3, $4, $5, $6, $7, $8) AS id_habitacion';
         const resultadoHabitacion = await db.query(sqlHabitacion, dataHabitacion);
@@ -57,7 +57,7 @@ const eliminarHabitacion = async (req, res) => {
 
 const tipoHabitaciones = async (req, res) =>{
     const sql=`
-        SELECT * FROM TBL_TIPO_HABITACIONES
+        SELECT * FROM TBL_TIPOS_HABITACION
     `
     try {
         const result = await db.query(sql);
