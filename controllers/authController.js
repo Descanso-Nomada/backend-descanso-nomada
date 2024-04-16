@@ -82,6 +82,7 @@ function generateTokenAndRespond(res, payload, message) {
         msg: message,
         user: payload
     });
+    console.log('se envio la cookie');
 }
 
 

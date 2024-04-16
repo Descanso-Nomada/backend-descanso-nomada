@@ -13,6 +13,7 @@ const validarCookie = async (req, res, next) => {
     req.user = payload;
     next();
 
+
   } catch (error) {
     res.status(404).json(error);
   }
@@ -29,7 +30,6 @@ const validarCookieHotel = async (req, res, next) => {
     info.payload = payload;
     req.idHotel = decoded.idHotel; 
     next();
-
   } catch (error) {
     res.status(404).json(error);
   }

@@ -33,7 +33,5 @@ app.use('api/reservaciones', apiReservaciones);
 app.use(express.static('public'));
 
 app.listen(3000, ()=>{
-
-console.log("Servidor en puerto 3000");
-
+    console.log("Servidor en puerto 3000");
 })
