@@ -10,10 +10,10 @@ const validarCookie = async (req, res, next) => {
     const payload = jwt.verify(req.cookies.token, 'secret');
     info.operacion = true;
     info.payload = payload;
-    req.user = payload;
+    req.userid = payload.userid;
     next();
   } catch (error) {
-    if (error.name === 'TokenExpiredError') {
+    if (error.name == 'TokenExpiredError') {
       res.status(401).json({ message: 'Token has expired',
     carga:payload });
     } else {
