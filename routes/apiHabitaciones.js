@@ -8,7 +8,7 @@ const upload = multer({storage:storage});
 import { registrarHabitacion, listarHabitaciones, eliminarHabitacion, tipoHabitaciones } from '../controllers/habitacionesController.js';
 
 apiHabitaciones.post('/registro',validarCookieHotel, upload.single('image'),registrarHabitacion);
-apiHabitaciones.get('', listarHabitaciones);
+apiHabitaciones.get('', validarCookieHotel, listarHabitaciones);
 apiHabitaciones.get('/tipos', tipoHabitaciones);
 apiHabitaciones.delete('/:id',eliminarHabitacion);
 

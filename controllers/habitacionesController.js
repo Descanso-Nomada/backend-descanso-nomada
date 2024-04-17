@@ -31,7 +31,7 @@ const registrarHabitacion = async (req, res) => {
 
 
 const listarHabitaciones = async(req,res) =>{
-    const id =req.params.id
+    const id =req.idHotel;
     try {
         const result = await db.query('SELECT * FROM TBL_HABITACIONES WHERE ID_HOTEL ==$1');
         res.json(result)
