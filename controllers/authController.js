@@ -10,7 +10,6 @@ const auth = async (req, res) => {
 
     try {
         let result = await db.query(sql, req.body.correo);
-        
         console.log(result);
         if(result.length == 0){
             sql = `SELECT ID_HOTEL, CORREO, CONTRASENIA, AUTENTICADO FROM TBL_HOTELES WHERE CORREO = $1`;
@@ -18,9 +17,8 @@ const auth = async (req, res) => {
             
             console.log(result);
             if(result.length == 0) {
-                console.log('no es usuario');
                 res.json({
-                    msg: 'El usuario no existe'
+                    msg: 'El hotel no existe'
                 });
                 return;
             } else {
@@ -59,7 +57,6 @@ const auth = async (req, res) => {
                 generateTokenAndRespond(res, payload, 'Autenticación Exitosa');
                 return;
             }
-          
         }
     } catch (error) {
         console.error("Error al autenticar: ", error);
@@ -82,7 +79,6 @@ function generateTokenAndRespond(res, payload, message) {
         msg: message,
         user: payload
     });
-    console.log('se envio la cookie');
 }
 
 

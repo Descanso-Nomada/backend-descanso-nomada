@@ -7,14 +7,15 @@ const registrarHabitacion = async (req, res) => {
     try {
         const sqlHabitacion = 'SELECT registrar_habitacion($1, $2, $3, $4, $5, $6, $7, $8) AS id_habitacion';
         const resultadoHabitacion = await db.query(sqlHabitacion, dataHabitacion);
-        const id_habitacion = resultadoHabitacion.rows[0].id_habitacion;
-
+        const id_habitacion = resultadoHabitacion[0].id_habitacion;
+        console.log(resultadoHabitacion);
         if (req.file) {
             const { buffer, originalname, mimetype } = req.file;
             const dataImagen = [id_habitacion, buffer, originalname, mimetype];
             const sqlImagen = `INSERT INTO TBL_IMAGENES_HABITACIONES (ID_HABITACION, IMAGEN_HABITACION, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO)
                                VALUES ($1, $2, $3, $4)`;
-            await db.query(sqlImagen, dataImagen);
+            const resultIMG= await db.query(sqlImagen, dataImagen);
+            console.log(resultIMG);
         }
 
         res.status(200).json({
