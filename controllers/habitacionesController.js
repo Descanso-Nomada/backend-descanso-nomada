@@ -30,16 +30,29 @@ const registrarHabitacion = async (req, res) => {
 
 
 
-const listarHabitaciones = async(req,res) =>{
-    const id =req.idHotel;
+const listarHabitaciones = async(req, res) => {
+    const id = req.idHotel;
     try {
-        const result = await db.query('SELECT * FROM TBL_HABITACIONES WHERE ID_HOTEL ==$1');
-        res.json(result)
+        const sql = `
+            SELECT h.*, th.NOMBRE_TIPO, th.ID_TIPO_HABITACION, i.ID_IMG_HABITACION, i.NOMBRE_ARCHIVO, i.EXTENSION_ARCHIVO, encode(i.IMAGEN_HABITACION, 'base64') as IMAGEN_HABITACION
+            FROM TBL_HABITACIONES h
+            LEFT JOIN TBL_TIPOS_HABITACION th ON h.ID_TIPO_HABITACION = th.ID_TIPO_HABITACION
+            LEFT JOIN LATERAL (
+                SELECT ID_IMG_HABITACION, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO, IMAGEN_HABITACION
+                FROM TBL_IMAGENES_HABITACIONES
+                WHERE ID_HABITACION = h.ID_HABITACION
+                ORDER BY ID_IMG_HABITACION DESC
+                LIMIT 1
+            ) i ON true
+            WHERE h.ID_HOTEL = $1
+        `;
+        const result = await db.query(sql, [id]);
+        res.json(result);
     } catch (error) {
-        console.error("Error al obtener las habitaciones: ", error);
-        res.status(500).send({ mensaje: "Error al obtener las habitaciones" });
+        console.error("Error al obtener las habitaciones con tipos e imágenes: ", error);
+        res.status(500).send({ mensaje: "Error al obtener las habitaciones con tipos e imágenes" });
     }
-}
+};
 
 const eliminarHabitacion = async (req, res) => {
     const id = req.params.id;
@@ -76,6 +89,11 @@ const tipoHabitaciones = async (req, res) =>{
         console.error('Error al obtener los tipos de habitacion', error);
         res.status(500).json({ error: 'Error al obtener los tipos de habitacion' });
     }
+}
+
+const cambiarEstadoHabitacion = async (req, res) =>{
+    const params =[req.params.id, req.body.estado]
+    const sql ='UPDATE TBL_HABICIONES SET RENTADA = $2 WHERE condicion;'
 }
 
 
