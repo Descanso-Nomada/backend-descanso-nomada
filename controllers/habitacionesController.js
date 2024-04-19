@@ -54,6 +54,31 @@ const listarHabitaciones = async(req, res) => {
     }
 };
 
+
+const listarHabitacionId = async(req, res) => {
+    const params = [req.idHotel, req.params.id];
+    console.log(params);
+    try {
+        const sql = `
+            SELECT h.*, th.NOMBRE_TIPO, th.ID_TIPO_HABITACION, i.ID_IMG_HABITACION, i.NOMBRE_ARCHIVO, i.EXTENSION_ARCHIVO, encode(i.IMAGEN_HABITACION, 'base64') as IMAGEN_HABITACION
+            FROM TBL_HABITACIONES h
+            LEFT JOIN TBL_TIPOS_HABITACION th ON h.ID_TIPO_HABITACION = th.ID_TIPO_HABITACION
+            LEFT JOIN LATERAL (
+                SELECT ID_IMG_HABITACION, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO, IMAGEN_HABITACION
+                FROM TBL_IMAGENES_HABITACIONES
+                WHERE ID_HABITACION = h.ID_HABITACION
+                ORDER BY ID_IMG_HABITACION DESC
+                LIMIT 1
+            ) i ON true
+            WHERE h.ID_HOTEL = $1 AND h.ID_HABITACION = $2
+        `;
+        const result = await db.query(sql, params);
+        res.json(result);
+    } catch (error) {
+        console.error("Error al obtener la habitacion con tipo e imágen: ", error);
+        res.status(500).send({ mensaje: "Error al obtener la habitacion con tipo e imágen:" });
+    }
+};
 const eliminarHabitacion = async (req, res) => {
     const id = req.params.id;
     try {
@@ -94,6 +119,16 @@ const tipoHabitaciones = async (req, res) =>{
 const cambiarEstadoHabitacion = async (req, res) =>{
     const params =[req.params.id, req.body.estado]
     const sql ='UPDATE TBL_HABICIONES SET RENTADA = $2 WHERE condicion;'
+    try {
+       const result = await db.query(sql, params)
+        res.json({
+            data:result,
+            message: 'Estado actualizado exitosamente'
+        })
+    }catch (error) {
+        console.error('Error al actualizar el estado de la habitacion', error);
+        res.status(500).json({ error: 'Error al actualizar el estado de la habitacion' });
+    }
 }
 
 
@@ -101,5 +136,7 @@ export{
     registrarHabitacion,
     listarHabitaciones,
     eliminarHabitacion,
-    tipoHabitaciones
+    tipoHabitaciones,
+    cambiarEstadoHabitacion,
+    listarHabitacionId
 }

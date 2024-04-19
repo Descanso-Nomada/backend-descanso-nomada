@@ -86,7 +86,6 @@ const imagenesHabitacion = async(req, res) =>{
           result: [],
         });
     }
-
 }
 
 const eliminarImgHabitacion = async () =>{

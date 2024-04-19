@@ -30,12 +30,10 @@ const validarCookieHotel = async (req, res, next) => {
     payload: "Token no valido"
   }
   try {
-    console.log('Esta es la cookie recibida '+req.cookies.token);
     const payload = jwt.verify(req.cookies.token, 'secret');
     info.operacion = true;
     info.payload = payload;
     req.idHotel = payload.idHotel; 
-    console.log('Este es el id obtenido en la carga util: '+payload.idHotel);
     next();
   } catch (error) {
     if (error.name == 'TokenExpiredError') {
