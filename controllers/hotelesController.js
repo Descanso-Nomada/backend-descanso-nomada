@@ -3,26 +3,38 @@ import { db } from '../database/conn.js';
 import { json } from 'express';
 
 
-const registrarHotel = async (req, res) =>{
-    const {ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP , CORREO, CONTRASENIA} =req.body;
+const registrarHotel = async (req, res) => {
+    const { ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP, CORREO, CONTRASENIA } = req.body;
     
-    try{
+    try {
         const salt = await bcrypt.genSalt(15);
         const contraseniaHash = await bcrypt.hash(CONTRASENIA, salt);
 
-        const sql = `CALL sp_registrar_hotel($1, $2, $3, $4, $5, $6, $7, $8)`;
-        
-        const values=[ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP , CORREO, contraseniaHash, false];
+        const sql = `SELECT fn_registrar_hotel($1, $2, $3, $4, $5, $6, $7, $8)`;
+        const values = [ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP, CORREO, contraseniaHash];
         console.log(values);
-        await db.query(sql, values);
-        res.json({ message: 'Hotel registrado con éxito' });           
-    }catch (error) {
-        res.status(500).json({ 
-            error: error, 
-            msg: 'Error al registrar el Hotel'
+
+        const result = await db.query(sql, values);
+        const id_hotel = result.nuevo_id_hotel;
+        console.log(result);
+        if (req.file) {
+            const { buffer, originalname, mimetype } = req.file;
+            const dataImagen = [id_hotel, buffer, originalname, mimetype];
+            const sqlImagen = `INSERT INTO TBL_IMAGENES_HOTELES (ID_HOTEL, IMAGEN_HOTEL, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO)
+                               VALUES ($1, $2, $3, $4)`;
+            const resultIMG = await db.query(sqlImagen, dataImagen);
+            console.log(resultIMG);
+        }
+        res.json({ message: 'Hotel e imagen registrados con éxito' });
+    } catch (error) {
+        console.error(error); // Es bueno también hacer un log del error para depuración
+        res.status(500).json({
+            error: error.message, // Es más útil enviar solo el mensaje de error
+            msg: 'Error al registrar el Hotel y la imagen del hotel'
         });
     }
-}
+};
+
 
 
 const borrarHotel = async (req, res) => {

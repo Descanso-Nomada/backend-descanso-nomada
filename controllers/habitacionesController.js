@@ -3,12 +3,10 @@ import { db } from '../database/conn.js';
 const registrarHabitacion = async (req, res) => {
     const { id_tipo_habitacion, capacidad, descripcion, caracteristicas, precio_noche } = req.body;
     const dataHabitacion = [req.idHotel, true, id_tipo_habitacion, capacidad, descripcion, false, caracteristicas, precio_noche];
-        console.log(dataHabitacion);
     try {
         const sqlHabitacion = 'SELECT registrar_habitacion($1, $2, $3, $4, $5, $6, $7, $8) AS id_habitacion';
         const resultadoHabitacion = await db.query(sqlHabitacion, dataHabitacion);
         const id_habitacion = resultadoHabitacion[0].id_habitacion;
-        console.log(resultadoHabitacion);
         if (req.file) {
             const { buffer, originalname, mimetype } = req.file;
             const dataImagen = [id_habitacion, buffer, originalname, mimetype];
