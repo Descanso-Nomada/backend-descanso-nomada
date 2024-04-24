@@ -9,21 +9,23 @@ const registrarHotel = async (req, res) => {
     try {
         const salt = await bcrypt.genSalt(15);
         const contraseniaHash = await bcrypt.hash(CONTRASENIA, salt);
-
-        const sql = `SELECT fn_registrar_hotel($1, $2, $3, $4, $5, $6, $7, $8)`;
-        const values = [ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP, CORREO, contraseniaHash];
-        console.log(values);
-
+        const sql=`
+        INSERT INTO TBL_HOTELES
+            (ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP, CORREO, CONTRASENIA, AUTENTICADO)
+            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) returning *
+        `
+        //const sql = `SELECT fn_registrar_hotel($1, $2, $3, $4, $5, $6, $7, $8)`;
+        const values = [ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP, CORREO, contraseniaHash, false];
         const result = await db.query(sql, values);
-        const id_hotel = result.nuevo_id_hotel;
+        const id_hotel = result[0].id_hotel;
         console.log(result);
+        console.log('ESTE ES EL ID DEL HOTEL:', id_hotel);
         if (req.file) {
             const { buffer, originalname, mimetype } = req.file;
             const dataImagen = [id_hotel, buffer, originalname, mimetype];
             const sqlImagen = `INSERT INTO TBL_IMAGENES_HOTELES (ID_HOTEL, IMAGEN_HOTEL, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO)
                                VALUES ($1, $2, $3, $4)`;
             const resultIMG = await db.query(sqlImagen, dataImagen);
-            console.log(resultIMG);
         }
         res.json({ message: 'Hotel e imagen registrados con éxito' });
     } catch (error) {
@@ -125,6 +127,7 @@ const mostrarHoteles = async (req, res) => {
         GROUP BY ID_HOTEL
     ) AS HABITACIONES_DISPONIBLES ON H.ID_HOTEL = HABITACIONES_DISPONIBLES.ID_HOTEL
     WHERE H.AUTENTICADO = TRUE;
+    
     
         `;
         const result = await db.query(query);

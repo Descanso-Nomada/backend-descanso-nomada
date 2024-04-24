@@ -10,12 +10,9 @@ const auth = async (req, res) => {
 
     try {
         let result = await db.query(sql, req.body.correo);
-        console.log(result);
         if(result.length == 0){
             sql = `SELECT ID_HOTEL, CORREO, CONTRASENIA, AUTENTICADO FROM TBL_HOTELES WHERE CORREO = $1`;
             result = await db.query(sql, params);
-            
-            console.log(result);
             if(result.length == 0) {
                 res.json({
                     msg: 'El hotel no existe'
@@ -23,12 +20,10 @@ const auth = async (req, res) => {
                 return;
             } else {
                 const passwordCorrect = await bcrypt.compare(req.body.contrasenia, result[0].contrasenia);
-                console.log(passwordCorrect);
                 if (!passwordCorrect) {
                     res.json({
                         msg: 'Credenciales incorrectas',
                     });
-                    console.log("pass no match");
                     return;
                 }
                 const payload = {
