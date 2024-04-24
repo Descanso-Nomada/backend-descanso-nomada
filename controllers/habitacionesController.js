@@ -74,7 +74,7 @@ const listarHabitacionId = async(req, res) => {
         res.json(result);
     } catch (error) {
         console.error("Error al obtener la habitacion con tipo e imágen: ", error);
-        res.status(500).send({ mensaje: "Error al obtener la habitacion con tipo e imágen:" });
+        res.status(500).send({ mensaje: "Error al obtener la habitacion sdfasdf con tipo e imágen:" });
     }
 };
 const eliminarHabitacion = async (req, res) => {
@@ -116,7 +116,7 @@ const tipoHabitaciones = async (req, res) =>{
 
 const cambiarEstadoHabitacion = async (req, res) =>{
     const params =[req.params.id, req.body.estado]
-    const sql ='UPDATE TBL_HABICIONES SET RENTADA = $2 WHERE condicion;'
+    const sql ='UPDATE TBL_HABITACIONES SET RENTADA = $2 WHERE ID_HABITACION = $1'
     try {
        const result = await db.query(sql, params)
         res.json({

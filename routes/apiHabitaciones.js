@@ -8,8 +8,8 @@ import { registrarHabitacion, listarHabitaciones, eliminarHabitacion, tipoHabita
 
 apiHabitaciones.post('/registro',validarCookieHotel, upload.single('image'),registrarHabitacion);
 apiHabitaciones.get('', validarCookieHotel, listarHabitaciones);
-apiHabitaciones.get('/:id', validarCookieHotel,listarHabitacionId);
 apiHabitaciones.get('/tipos', tipoHabitaciones);
+apiHabitaciones.get('/:id', validarCookieHotel,listarHabitacionId);
 apiHabitaciones.delete('/:id',validarCookieHotel,eliminarHabitacion);
 apiHabitaciones.put('/:id',validarCookieHotel, cambiarEstadoHabitacion);
 
