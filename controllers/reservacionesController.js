@@ -1,8 +1,10 @@
 import {db} from "../database/conn.js";
 
 const crearReservacion = async (req, res) =>{
-    const params= [req.body.id_habitacion, req.params.userid, req.body.cant_noches, req.body.total, req.body.fecha_entrada, req.body.fecha_salida];
     try {
+        const precio_habitacion = await db.query(`SELECT PRECIO_NOCHE FROM TBL_HABITACIONES WHERE ID_HABITACION = ${req.body.id_habitacion}`);
+        const total =precio_habitacion*req.body.cant_noches;
+        const params= [req.body.id_habitacion, req.userid, req.body.cant_noches, total, req.body.fecha_entrada, req.body.fecha_salida];
         const sql= `
             INSERT INTO TBL_RESERVACIONES
             (ID_HABITACION, ID_USUARIO, CANT_NOCHES, TOTAL, FECHA_ENTRADA, FECHA_SALIDA)
