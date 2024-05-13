@@ -34,6 +34,7 @@ const validarCookieHotel = async (req, res, next) => {
     info.operacion = true;
     info.payload = payload;
     req.idHotel = payload.idHotel; 
+    console.log(payload.idHotel);
     next();
   } catch (error) {
     if (error.name == 'TokenExpiredError') {

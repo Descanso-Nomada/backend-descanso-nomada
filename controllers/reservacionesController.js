@@ -24,7 +24,7 @@ const crearReservacion = async (req, res) =>{
 }
 
 const obtenerReservaciones = async (req, res) =>{
-    const idHotel = req.params.idHotel;
+    const idHotel = req.idHotel;
     try {
         const sql=`
         SELECT
@@ -44,6 +44,8 @@ const obtenerReservaciones = async (req, res) =>{
             TBL_HABITACIONES AS h ON r.ID_HABITACION = h.ID_HABITACION
         JOIN
             TBL_HOTELES AS t ON h.ID_HOTEL = t.ID_HOTEL
+        JOIN 
+            TBL_TIPOS_HABITACION AS j ON j.ID_TIPO_HABITACION = h.ID_TIPO_HABITACION
         WHERE
             t.ID_HOTEL = $1 AND r.ESTADO = 'NO REVISADO';
         `
