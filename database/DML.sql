@@ -1,4 +1,4 @@
--- Active: 1710565912835@@localhost@5432@descanso_nomada
+-- Active: 1709789023717@@127.0.0.1@5432@descanso_nomada@public
 -- Insertar datos en la tabla de roles
 INSERT INTO TBL_ROL (ROL) VALUES
 ('ADMIN'),
@@ -240,8 +240,3 @@ VALUES
     ('Habitacion Penthouse');
 
 
-
-
-SELECT * FROM TBL_TIPOS_HABITACION
-
-DELETE FROM TBL_TIPOS_HABITACION
