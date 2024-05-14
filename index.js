@@ -28,7 +28,7 @@ app.use('/api/municipios',apiMunicipios)
 app.use('/api/ciudades', apiCiudades);
 app.use('/api/habitaciones', apiHabitaciones);
 app.use('/api/imagenes',apiImagenes);
-app.use('api/reservaciones', apiReservaciones);
+app.use('/api/reservaciones', apiReservaciones);
 
 app.use(express.static('public'));
 

@@ -1,8 +1,10 @@
 import {db} from "../database/conn.js";
 
 const crearReservacion = async (req, res) =>{
-    const params= [req.body.id_habitacion, req.params.userid, req.body.cant_noches, req.body.total, req.body.fecha_entrada, req.body.fecha_salida];
     try {
+        const precio_habitacion = await db.query(`SELECT PRECIO_NOCHE FROM TBL_HABITACIONES WHERE ID_HABITACION = ${req.body.id_habitacion}`);
+        const total =precio_habitacion*req.body.cant_noches;
+        const params= [req.body.id_habitacion, req.userid, req.body.cant_noches, total, req.body.fecha_entrada, req.body.fecha_salida];
         const sql= `
             INSERT INTO TBL_RESERVACIONES
             (ID_HABITACION, ID_USUARIO, CANT_NOCHES, TOTAL, FECHA_ENTRADA, FECHA_SALIDA)
@@ -22,7 +24,7 @@ const crearReservacion = async (req, res) =>{
 }
 
 const obtenerReservaciones = async (req, res) =>{
-    const idHotel = req.params.idHotel;
+    const idHotel = req.idHotel;
     try {
         const sql=`
         SELECT
@@ -42,6 +44,8 @@ const obtenerReservaciones = async (req, res) =>{
             TBL_HABITACIONES AS h ON r.ID_HABITACION = h.ID_HABITACION
         JOIN
             TBL_HOTELES AS t ON h.ID_HOTEL = t.ID_HOTEL
+        JOIN 
+            TBL_TIPOS_HABITACION AS j ON j.ID_TIPO_HABITACION = h.ID_TIPO_HABITACION
         WHERE
             t.ID_HOTEL = $1 AND r.ESTADO = 'NO REVISADO';
         `
