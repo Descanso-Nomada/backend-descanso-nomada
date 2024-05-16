@@ -24,11 +24,11 @@ const validateRegistroUsuario = [
         .isLength({ max: 18 }).withMessage('El DNI no debe exceder los 18 caracteres.')
         .isAlphanumeric().withMessage('El DNI debe contener solo caracteres alfanuméricos.'),
 
-    check('telefono')
+        check('telefono')
         .exists({ nullable: true, checkFalsy: true })
         .isLength({ max: 9 }).withMessage('El teléfono no debe tener más de 9 dígitos.')
         .isNumeric().withMessage('El teléfono debe contener solo números.')
-        .matches(/^[1-9]\d{8}$/).withMessage('El teléfono debe ser un número válido.'),
+        .matches(/^[1-9]\d{7,8}$/).withMessage('El teléfono debe ser un número válido.'),    
 
         check('fecha_nacimiento')
         .exists({ checkFalsy: true }).withMessage('La fecha de nacimiento es obligatoria.')

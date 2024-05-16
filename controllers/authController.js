@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import { db } from '../database/conn.js';
 
 const auth = async (req, res) => {
-    let sql = `SELECT NOMBRE_USUARIO, CONTRASENIA, ID_ROL FROM TBL_USUARIOS WHERE correo = $1`;
+    let sql = `SELECT NOMBRE_USUARIO, CONTRASENIA, ID_ROL, ID_USUARIO FROM TBL_USUARIOS WHERE correo = $1`;
     let params = [req.body.correo, req.body.contrasenia];
 
     try {
@@ -36,7 +36,6 @@ const auth = async (req, res) => {
                 return;
             }
         } else {
-            console.log(result[0]);
             const passwordCorrect = await bcrypt.compare(req.body.contrasenia, result[0].contrasenia);
             if (!passwordCorrect) {
                 res.json({

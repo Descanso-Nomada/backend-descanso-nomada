@@ -3,12 +3,13 @@ import {db} from "../database/conn.js";
 const crearReservacion = async (req, res) =>{
     try {
         const precio_habitacion = await db.query(`SELECT PRECIO_NOCHE FROM TBL_HABITACIONES WHERE ID_HABITACION = ${req.body.id_habitacion}`);
-        const total =precio_habitacion*req.body.cant_noches;
+        const total =(precio_habitacion[0].precio_noche)*req.body.cant_noches;
         const params= [req.body.id_habitacion, req.userid, req.body.cant_noches, total, req.body.fecha_entrada, req.body.fecha_salida];
+        console.log(params);
         const sql= `
             INSERT INTO TBL_RESERVACIONES
             (ID_HABITACION, ID_USUARIO, CANT_NOCHES, TOTAL, FECHA_ENTRADA, FECHA_SALIDA)
-            VALUES($1, $2, $3, $4, $5, #6)
+            VALUES($1, $2, $3, $4, $5, $6)
         `
         await db.query(sql, params);
         res.json({ 
@@ -29,10 +30,14 @@ const obtenerReservaciones = async (req, res) =>{
         const sql=`
         SELECT
         r.*,
+        u.NOMBRE_USUARIO,
+        u.CORREO,
+        u.TELEFONO,
         h.ID_HABITACION,
         h.ID_HOTEL,
         h.PUBLICACION_ACTIVA,
-        h.ID_TIPO_HABITACION,
+        j.ID_TIPO_HABITACION,
+        j.NOMBRE_TIPO,
         h.CAPACIDAD,
         h.DESCRIPCION,
         h.RENTADA,
@@ -46,6 +51,8 @@ const obtenerReservaciones = async (req, res) =>{
             TBL_HOTELES AS t ON h.ID_HOTEL = t.ID_HOTEL
         JOIN 
             TBL_TIPOS_HABITACION AS j ON j.ID_TIPO_HABITACION = h.ID_TIPO_HABITACION
+        JOIN
+            TBL_USUARIOS AS u ON u.ID_USUARIO = r.ID_USUARIO
         WHERE
             t.ID_HOTEL = $1 AND r.ESTADO = 'NO REVISADO';
         `
@@ -103,27 +110,31 @@ const reservacionesUsuario = async (req, res) =>{
     }
 }
 
-const actualizarReservacion = async (req, res) =>{
+const actualizarReservacion = async (req, res) => {
     let params = [req.body.estado, req.body.reservacionID];
-    const sql= `
+    const sql = `
         UPDATE TBL_RESERVACIONES
         SET ESTADO = $1
         WHERE ID_RESERVACION = $2
-    `
+        RETURNING *
+    `;
+
     try {
-        const result= await db.query(sql, params);
-        if (result.length > 0) {
+        const result = await db.query(sql, params);
+        console.log(result);
+        if (result.length >= 0) {
             res.json({
                 data: result,
-                message:`Actualizacion exitosa: La reservacion fue ${params[0]}`
+                message: `Actualización exitosa: La reservación fue ${params[0]}`
             });
         } else {
-            res.status(404).json({ message: "No hay reservaciones no revisadas para este hotel." });
+            res.status(404).json({ message: "No se encontró la reservación para actualizar." });
         }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-}
+};
+
 
 const eliminarReservacion = async (req, res) =>{
     const reservacionID =  req.params.id;

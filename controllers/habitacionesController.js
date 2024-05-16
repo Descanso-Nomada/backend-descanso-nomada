@@ -29,7 +29,6 @@ const registrarHabitacion = async (req, res) => {
 
 
 const listarHabitaciones = async(req, res) => {
-    console.log('entramos aqui');
     let id = req.idHotel || req.params.id;
     try {
         const sql = `
@@ -56,7 +55,6 @@ const listarHabitaciones = async(req, res) => {
 
 const listarHabitacionId = async(req, res) => {
     const params = [req.idHotel, req.params.id];
-    console.log(params);
     try {
         const sql = `
             SELECT h.*, th.NOMBRE_TIPO, th.ID_TIPO_HABITACION, i.ID_IMG_HABITACION, i.NOMBRE_ARCHIVO, i.EXTENSION_ARCHIVO, encode(i.IMAGEN_HABITACION, 'base64') as IMAGEN_HABITACION
