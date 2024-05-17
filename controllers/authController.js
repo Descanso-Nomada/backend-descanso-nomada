@@ -11,7 +11,7 @@ const auth = async (req, res) => {
     try {
         let result = await db.query(sql, req.body.correo);
         if(result.length == 0){
-            sql = `SELECT ID_HOTEL, CORREO, CONTRASENIA, AUTENTICADO FROM TBL_HOTELES WHERE CORREO = $1`;
+            sql = `SELECT ID_HOTEL, NOMBRE, CORREO, CONTRASENIA, AUTENTICADO FROM TBL_HOTELES WHERE CORREO = $1`;
             result = await db.query(sql, params);
             if(result.length == 0) {
                 res.json({
@@ -27,6 +27,7 @@ const auth = async (req, res) => {
                     return;
                 }
                 const payload = {
+                    hotel_name:result[0].nombre,
                     idHotel: result[0].id_hotel,
                     correo: result[0].correo,
                     rolid:3,
