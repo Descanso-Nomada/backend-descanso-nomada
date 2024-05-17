@@ -93,7 +93,7 @@ const listarHabitaciones = async(req, res) => {
 
 
 const listarHabitacionId = async(req, res) => {
-    const params = [req.idHotel, req.params.id];
+    const params = [req.params.id];
     try {
         const sql = `
             SELECT h.*, th.NOMBRE_TIPO, th.ID_TIPO_HABITACION, i.ID_IMG_HABITACION, i.NOMBRE_ARCHIVO, i.EXTENSION_ARCHIVO, encode(i.IMAGEN_HABITACION, 'base64') as IMAGEN_HABITACION
@@ -106,7 +106,7 @@ const listarHabitacionId = async(req, res) => {
                 ORDER BY ID_IMG_HABITACION DESC
                 LIMIT 1
             ) i ON true
-            WHERE h.ID_HOTEL = $1 AND h.ID_HABITACION = $2
+            WHERE h.ID_HABITACION = $1
         `;
         const result = await db.query(sql, params);
         res.json(result);

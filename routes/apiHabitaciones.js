@@ -10,7 +10,7 @@ apiHabitaciones.post('/registro',validarCookieHotel, upload.single('image'),regi
 apiHabitaciones.get('',validarCookieHotel, listarHabitaciones);
 apiHabitaciones.get('/usuarios/:id', listarHabitaciones);
 apiHabitaciones.get('/tipos', tipoHabitaciones);
-apiHabitaciones.get('/:id', validarCookieHotel,listarHabitacionId);
+apiHabitaciones.get('/:id', listarHabitacionId);
 apiHabitaciones.delete('/:id',validarCookieHotel,eliminarHabitacion);
 apiHabitaciones.put('/:id',validarCookieHotel, cambiarEstadoHabitacion);
 apiHabitaciones.put('/actualizar/:id_habitacion', validarCookieHotel, upload.single('imagen'), actualizarHabitacion);
