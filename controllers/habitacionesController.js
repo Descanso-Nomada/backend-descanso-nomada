@@ -13,7 +13,6 @@ const registrarHabitacion = async (req, res) => {
             const sqlImagen = `INSERT INTO TBL_IMAGENES_HABITACIONES (ID_HABITACION, IMAGEN_HABITACION, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO)
                                VALUES ($1, $2, $3, $4)`;
             const resultIMG= await db.query(sqlImagen, dataImagen);
-            console.log(resultIMG);
         }
 
         res.status(200).json({
@@ -26,6 +25,46 @@ const registrarHabitacion = async (req, res) => {
     }
 };
 
+const actualizarHabitacion = async (req, res) => {
+    const { id_habitacion } = req.params;
+    const { id_tipo_habitacion, descripcion, rentada, precio_noche, caracteristicas, publicacion_activa } = req.body;
+    
+    const dataHabitacion = [id_tipo_habitacion, descripcion, rentada, precio_noche, caracteristicas, publicacion_activa, id_habitacion];
+    const sqlHabitacion = `
+        UPDATE TBL_HABITACIONES 
+        SET 
+            ID_TIPO_HABITACION = $1, 
+            DESCRIPCION = $2, 
+            RENTADA = $3, 
+            PRECIO_NOCHE = $4, 
+            CARACTERISTICAS = $5, 
+            PUBLICACION_ACTIVA = $6
+        WHERE 
+            ID_HABITACION = $7
+    `;
+
+    try {
+        await db.query(sqlHabitacion, dataHabitacion);
+
+        if (req.file) {
+            const { buffer, originalname, mimetype } = req.file;
+            const dataImagen = [buffer, originalname, mimetype, id_habitacion];
+            const sqlImagen = `
+                INSERT INTO TBL_IMAGENES_HABITACIONES (IMAGEN_HABITACION, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO, ID_HABITACION)
+                VALUES ($1, $2, $3, $4)
+            `;
+            await db.query(sqlImagen, dataImagen);
+        }
+
+        res.status(200).json({
+            mensaje: "Habitación actualizada exitosamente.",
+            id_habitacion
+        });
+    } catch (error) {
+        console.error("Error al actualizar la habitación o al guardar la imagen: ", error);
+        res.status(500).send({ mensaje: "Error al procesar la solicitud." });
+    }
+};
 
 
 const listarHabitaciones = async(req, res) => {
@@ -135,5 +174,6 @@ export{
     eliminarHabitacion,
     tipoHabitaciones,
     cambiarEstadoHabitacion,
-    listarHabitacionId
+    listarHabitacionId, 
+    actualizarHabitacion
 }
