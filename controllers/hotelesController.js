@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import { db } from '../database/conn.js';
+import twilio from 'twilio';
 import { json } from 'express';
 
 
@@ -57,6 +58,7 @@ const hotelesInactivos = async (req, res) =>{
         const sql =`SELECT * FROM TBL_HOTELES WHERE AUTENTICADO = FALSE`;
         const result = await db.query(sql);
         res.json(result)
+        mensajeHotelInactivo();
     } catch (error) {
         console.error('Error al listar los hoteles:', error);
         res.status(500).json({ error: 'Error al listar los hoteles' });
@@ -209,3 +211,27 @@ export{
     hotelesInactivos,
     cambiarEstadoHotel
 };
+
+
+const mensajeHotelInactivo = () => {
+    const accountSid = 'ACc31ba871f348cf28d19fe34c8384277c';
+    const authToken = '143dc5d8d4d8d4273953e1975488067e';
+    const client = twilio(accountSid, authToken);
+  
+    return client.messages
+      .create({
+        body: 'Como ta muchacho yo a uste lo veo muy bien',
+        from: '+14793485759',
+        to: '+50432469726'
+      })
+      .then(message => {
+        console.log(message.sid);
+        return message.sid;
+      })
+      .catch(error => {
+        console.error('Error al enviar el mensaje:', error);
+        throw error;
+      });
+  };
+
+
