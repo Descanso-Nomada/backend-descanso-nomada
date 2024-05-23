@@ -16,7 +16,6 @@ const registrarUsuario = async (req, res) => {
     }
 }
 
-
 const mostrarUsuarios = async (req, res) => {
     try {
         const query = `
@@ -38,37 +37,6 @@ const mostrarUsuarios = async (req, res) => {
         res.status(500).json({ error: 'Error al mostrar hoteles' });
     }
 };
-
-// const listarClientes = async (req, res) => {
-//     try {
-//         const result = await db.query('SELECT ID_USUARIO, NOMBRE_USUARIO, DNI, CORREO, TELEFONO FROM TBL_USUARIOS WHERE ID_ROL = 2');
-//         res.json(result.rows);
-//     } catch (error) {
-//         console.error('Error al obtener usuarios:', error);
-//         res.status(500).json({ error: 'Error al obtener usuarios' });
-//     }
-// }
-
-
-// const obtenerUsuarioporId = async (req, res) =>{
-//     const values=[req.params.id_usario];
-//     try{
-//         const sql = 'SELECT ID_ROL, CORREO, NOMBRE_USUARIO, TELEFONO FROM TBL_USUARIOS WHERE ID_USUARIO = $1';
-//         const result = await db.query(sql,values)
-//         console.log(result.rows);
-//         if(result.length==0){
-//             res.json({
-//                 message:'El usuario no existe'
-//             })
-//         }else{   
-//             res.json(result.rows)
-//         }
-//     }catch(error){ 
-//         console.error('Error al obtener usuarios:', error);
-//         res.status(500).json({ error: 'Error al obtener usuarios' });
-//     }
-// }
-
 
 const eliminarUsuario = async (req, res) => {
     const values=[req.params.id_usario];
@@ -92,11 +60,11 @@ const eliminarUsuario = async (req, res) => {
     };
 
 const actualizarContrasenia = async (req, res) =>{
-    const data={id_usuario, contrasenia, nueva_contrasenia}=req.body
+    const params =[req.userid, req.body.correo, req.body.contrasenia, req.body.nueva_contrasenia]
     try {
         const sql ='SELECT CONTRASENIA FROM TBL_USUARIOS WHERE ID_USUARIO =$1'
         const getPass= await bd.query(sql,data.id_usuario);
-        const passwordCorrect = await bcrypt.compare(req.contrasenia, getPass[0].contrasenia);
+        const passwordCorrect = await bcrypt.compare(params[2], getPass[0].contrasenia);
         if (!passwordCorrect) {
             res.json({
                 msg: 'Contrasenia Incorrecta',
