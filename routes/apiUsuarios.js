@@ -6,9 +6,8 @@ import { validarCookie } from '../helpers/helpersCookie.js';
 
 
 apiUsuarios.post('/registro',validateRegistroUsuario, registrarUsuario);
-// apiUsuarios.get('/:id',obtenerUsuarioporId);
 apiUsuarios.get('/clientes',mostrarUsuarios);
-apiUsuarios.put('',actualizarContrasenia);
+apiUsuarios.put('',validarCookie,actualizarContrasenia);
 apiUsuarios.delete('/:id',eliminarUsuario);
 export { 
     apiUsuarios 

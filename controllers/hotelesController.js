@@ -84,7 +84,7 @@ const cambiarEstadoHotel = async (req, res) => {
 const mostrarHoteles = async (req, res) => {
     try {
         const query = `
-        SELECT  
+        SELECT
         H.ID_HOTEL, 
         H.ID_DIRECCION, 
         CONCAT(COL.NOMBRE_COLONIA, ', ', CIU.NOMBRE_CIUDAD, ', ', MUN.NOMBRE_MUNICIPIO, ', ', DEP.NOMBRE_DEPTO) AS DIRECCION_COMPLETA,
@@ -129,8 +129,6 @@ const mostrarHoteles = async (req, res) => {
         GROUP BY ID_HOTEL
     ) AS HABITACIONES_DISPONIBLES ON H.ID_HOTEL = HABITACIONES_DISPONIBLES.ID_HOTEL
     WHERE H.AUTENTICADO = TRUE;
-    
-    
         `;
         const result = await db.query(query);
 
@@ -144,7 +142,7 @@ const mostrarHoteles = async (req, res) => {
 };
 
 const mostrarHotel = async (req, res) => {
-    const hotelId = req.params.id;
+    const hotelId = parseInt(req.params.id);
     try {
         const query = `
         SELECT  
@@ -211,3 +209,5 @@ export{
     hotelesInactivos,
     cambiarEstadoHotel
 };
+
+

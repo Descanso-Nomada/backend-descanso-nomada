@@ -4,24 +4,17 @@ import { db } from '../database/conn.js';
 const registrarUsuario = async (req, res) => {
     const { nombre_usuario, id_rol, dni, correo, telefono, fecha_nacimiento, contrasenia } = req.body;
     try {
-        
-        // validar campos con express....
-
         const salt = await bcrypt.genSalt(15);
         const contraseniaHash = await bcrypt.hash(contrasenia, salt);
-
         const sql = `CALL sp_registrar_usuario($1, $2, $3, $4, $5, $6, $7)`;
-
         const values = [nombre_usuario, id_rol, dni, correo, telefono, fecha_nacimiento, contraseniaHash];
-        let result = await db.query(sql, values);
-
+        await db.query(sql, values);
         res.json({ message: 'Usuario registrado con éxito' });
     } catch (error) {
         console.error('Error al registrar el usuario:', error);
         res.status(500).json({ msg: 'Error al registrar el usuario', error });
     }
 }
-
 
 const mostrarUsuarios = async (req, res) => {
     try {
@@ -45,37 +38,6 @@ const mostrarUsuarios = async (req, res) => {
     }
 };
 
-// const listarClientes = async (req, res) => {
-//     try {
-//         const result = await db.query('SELECT ID_USUARIO, NOMBRE_USUARIO, DNI, CORREO, TELEFONO FROM TBL_USUARIOS WHERE ID_ROL = 2');
-//         res.json(result.rows);
-//     } catch (error) {
-//         console.error('Error al obtener usuarios:', error);
-//         res.status(500).json({ error: 'Error al obtener usuarios' });
-//     }
-// }
-
-
-// const obtenerUsuarioporId = async (req, res) =>{
-//     const values=[req.params.id_usario];
-//     try{
-//         const sql = 'SELECT ID_ROL, CORREO, NOMBRE_USUARIO, TELEFONO FROM TBL_USUARIOS WHERE ID_USUARIO = $1';
-//         const result = await db.query(sql,values)
-//         console.log(result.rows);
-//         if(result.length==0){
-//             res.json({
-//                 message:'El usuario no existe'
-//             })
-//         }else{   
-//             res.json(result.rows)
-//         }
-//     }catch(error){ 
-//         console.error('Error al obtener usuarios:', error);
-//         res.status(500).json({ error: 'Error al obtener usuarios' });
-//     }
-// }
-
-
 const eliminarUsuario = async (req, res) => {
     const values=[req.params.id_usario];
     try {
@@ -98,11 +60,11 @@ const eliminarUsuario = async (req, res) => {
     };
 
 const actualizarContrasenia = async (req, res) =>{
-    const data={id_usuario, contrasenia, nueva_contrasenia}=req.body
+    const params =[req.userid, req.body.correo, req.body.contrasenia, req.body.nueva_contrasenia]
     try {
         const sql ='SELECT CONTRASENIA FROM TBL_USUARIOS WHERE ID_USUARIO =$1'
         const getPass= await bd.query(sql,data.id_usuario);
-        const passwordCorrect = await bcrypt.compare(req.contrasenia, getPass[0].contrasenia);
+        const passwordCorrect = await bcrypt.compare(params[2], getPass[0].contrasenia);
         if (!passwordCorrect) {
             res.json({
                 msg: 'Contrasenia Incorrecta',

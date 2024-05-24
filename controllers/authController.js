@@ -83,11 +83,21 @@ const validarCookieActiva = (req, res) => {
 }
 
 const cerrarSesion = (req, res)=>{
-
     res.clearCookie('token', {httpOnly:true, expires: new Date(0)} );
-
     res.json({mensaje : "Cerrar Sesion"});
-
 }
 
-export { auth, validarCookieActiva, cerrarSesion }
+const verificarSesion = (req, res) =>{
+    if (req.user) {
+        res.json({ user: req.user });
+    } else {
+        res.status(401).json({ msg: 'No autorizado' });
+    }
+}
+
+export { 
+    auth, 
+    validarCookieActiva, 
+    verificarSesion,
+    cerrarSesion 
+}
