@@ -11,6 +11,7 @@ import { apiCiudades } from "./routes/apiCiudades.js";
 import { apiHabitaciones } from "./routes/apiHabitaciones.js";
 import { apiImagenes } from "./routes/apiImagenes.js";
 import { apiReservaciones } from "./routes/apiReservaciones.js";
+import { apiResetPass } from "./routes/apiResetPass.js";
 
 app.use(express.json());
 app.use(cookieParser());
@@ -29,6 +30,7 @@ app.use('/api/ciudades', apiCiudades);
 app.use('/api/habitaciones', apiHabitaciones);
 app.use('/api/imagenes',apiImagenes);
 app.use('/api/reservaciones', apiReservaciones);
+app.use('/api/reset-password', apiResetPass);
 
 app.use(express.static('public'));
 
