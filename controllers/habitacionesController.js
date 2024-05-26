@@ -118,7 +118,7 @@ const listarHabitacionId = async(req, res) => {
 const eliminarHabitacion = async (req, res) => {
     const id = req.params.id;
     try {
-        const sql= "DELETE FROM TBL_HABICIONES WHERE  ID_HABITACION =$1"
+        const sql= "DELETE FROM TBL_HABICIONES WHERE ID_HABITACION =$1"
         const result = await db.query(sql,id);
         res.json({
             message: 'Habitacion eliminada con exito',

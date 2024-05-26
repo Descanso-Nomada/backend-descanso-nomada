@@ -63,33 +63,27 @@ const actualizarContrasenia = async (req, res) =>{
     const params =[req.userid, req.body.correo, req.body.contrasenia, req.body.nueva_contrasenia]
     try {
         const sql ='SELECT CONTRASENIA FROM TBL_USUARIOS WHERE ID_USUARIO =$1'
-        const getPass= await bd.query(sql,data.id_usuario);
+        const getPass= await db.query(sql,params[0]);
         const passwordCorrect = await bcrypt.compare(params[2], getPass[0].contrasenia);
         if (!passwordCorrect) {
-            res.json({
-                msg: 'Contrasenia Incorrecta',
+            res.status(201).json({
+                msg: 'Contraseña Incorrecta',
             });
             return;
         }else{
             const salt = await bcrypt.genSalt(15);
-            const contraseniaHash = await bcrypt.hash(data.nueva_contrasenia, salt);
+            const contraseniaHash = await bcrypt.hash(params[3], salt);
             const sql2='UPDATE TBL_USUARIOS SET CONTRASENIA = $2 WHERE ID_USUARIO = $1';
-            const values=[data.id_usuario,contraseniaHash];
-            const result = await bd.query(sql2, values);
-            if(result.length==0){
-                res.json({
-                    msg: 'Error al cambiar la contrasenia',
-                });
-            }
-            else{
-                res.json({
-                    msg: 'Contrasenia actualizada correctamente',
-                });
-            }
+            const values=[params[0],contraseniaHash];
+            await db.query(sql2, values);
+            res.json({
+                msg: 'Contraseña actualizada correctamente',
+            });
+           
         }
     } catch (error) {
-        console.error('Error al actualizar la contrasenia', error);
-        res.status(500).json({ error: 'Error al eliminar el usuario' });
+        console.error('Error al actualizar la contraseña', error);
+        res.status(500).json({ error: 'Error al actualizar la contraseña' });
     }
 }
 

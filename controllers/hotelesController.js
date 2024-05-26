@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
 import { db } from '../database/conn.js';
-import { json } from 'express';
 
 
 const registrarHotel = async (req, res) => {
@@ -14,7 +13,6 @@ const registrarHotel = async (req, res) => {
             (ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP, CORREO, CONTRASENIA, AUTENTICADO)
             VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) returning *
         `
-        //const sql = `SELECT fn_registrar_hotel($1, $2, $3, $4, $5, $6, $7, $8)`;
         const values = [ID_DIRECCION, REFERENCIA_LOCAL, NOMBRE, RTN, NO_TELEFONO, NO_WHATSAPP, CORREO, contraseniaHash, false];
         const result = await db.query(sql, values);
         const id_hotel = result[0].id_hotel;
@@ -25,13 +23,13 @@ const registrarHotel = async (req, res) => {
             const dataImagen = [id_hotel, buffer, originalname, mimetype];
             const sqlImagen = `INSERT INTO TBL_IMAGENES_HOTELES (ID_HOTEL, IMAGEN_HOTEL, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO)
                                VALUES ($1, $2, $3, $4)`;
-            const resultIMG = await db.query(sqlImagen, dataImagen);
+           await db.query(sqlImagen, dataImagen);
         }
         res.json({ message: 'Hotel e imagen registrados con éxito' });
     } catch (error) {
-        console.error(error); // Es bueno también hacer un log del error para depuración
+        console.error(error); 
         res.status(500).json({
-            error: error.message, // Es más útil enviar solo el mensaje de error
+            error: error.message,
             msg: 'Error al registrar el Hotel y la imagen del hotel'
         });
     }
@@ -65,7 +63,6 @@ const hotelesInactivos = async (req, res) =>{
 
 const cambiarEstadoHotel = async (req, res) => {
     const id = req.params.id;
-    console.log(id);
     try {
         const sql = `UPDATE TBL_HOTELES
         SET AUTENTICADO = TRUE
@@ -201,13 +198,43 @@ const mostrarHotel = async (req, res) => {
 };
 
 
+const actualizarContrasenia = async (req, res) =>{
+    const params =[req.idHotel, req.body.correo, req.body.contrasenia, req.body.nueva_contrasenia]
+    try {
+        const sql ='SELECT CONTRASENIA FROM TBL_HOTELES WHERE ID_USUARIO =$1'
+        const getPass= await db.query(sql,params[0]);
+        const passwordCorrect = await bcrypt.compare(params[2], getPass[0].contrasenia);
+        if (!passwordCorrect) {
+            res.status(201).json({
+                msg: 'Contraseña Incorrecta',
+            });
+            return;
+        }else{
+            const salt = await bcrypt.genSalt(15);
+            const contraseniaHash = await bcrypt.hash(params[3], salt);
+            const sql2='UPDATE TBL_HOTELES SET CONTRASENIA = $2 WHERE ID_USUARIO = $1';
+            const values=[params[0],contraseniaHash];
+            await db.query(sql2, values);
+            res.json({
+                msg: 'Contraseña actualizada correctamente',
+            });
+           
+        }
+    } catch (error) {
+        console.error('Error al actualizar la contraseña', error);
+        res.status(500).json({ error: 'Error al actualizar la contraseña' });
+    }
+}
+
+
 export{
     registrarHotel,
     borrarHotel,
     mostrarHoteles,
     mostrarHotel,
     hotelesInactivos,
-    cambiarEstadoHotel
+    cambiarEstadoHotel,
+    actualizarContrasenia
 };
 
 
