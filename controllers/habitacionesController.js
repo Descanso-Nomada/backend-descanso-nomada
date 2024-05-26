@@ -3,27 +3,35 @@ import { db } from '../database/conn.js';
 const registrarHabitacion = async (req, res) => {
     const { id_tipo_habitacion, capacidad, descripcion, caracteristicas, precio_noche } = req.body;
     const dataHabitacion = [req.idHotel, true, id_tipo_habitacion, capacidad, descripcion, false, caracteristicas, precio_noche];
+    
+
     try {
         const sqlHabitacion = 'SELECT registrar_habitacion($1, $2, $3, $4, $5, $6, $7, $8) AS id_habitacion';
         const resultadoHabitacion = await db.query(sqlHabitacion, dataHabitacion);
         const id_habitacion = resultadoHabitacion[0].id_habitacion;
-        if (req.file) {
-            const { buffer, originalname, mimetype } = req.file;
-            const dataImagen = [id_habitacion, buffer, originalname, mimetype];
-            const sqlImagen = `INSERT INTO TBL_IMAGENES_HABITACIONES (ID_HABITACION, IMAGEN_HABITACION, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO)
-                               VALUES ($1, $2, $3, $4)`;
-            const resultIMG= await db.query(sqlImagen, dataImagen);
+
+        if (req.files && req.files.length === 5) {
+            for (let file of req.files) {
+                const { buffer, originalname, mimetype } = file;
+                const dataImagen = [id_habitacion, buffer, originalname, mimetype];
+                const sqlImagen = `INSERT INTO TBL_IMAGENES_HABITACIONES (ID_HABITACION, IMAGEN_HABITACION, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO)
+                                   VALUES ($1, $2, $3, $4)`;
+                await db.query(sqlImagen, dataImagen);
+            }
+        } else {
+            return res.status(400).json({ mensaje: "Debes subir exactamente 5 imágenes." });
         }
 
         res.status(200).json({
-            mensaje: "Habitación registrada y imagen guardada exitosamente.",
+            mensaje: "Habitación registrada y imágenes guardadas exitosamente.",
             id_habitacion
         });
     } catch (error) {
-        console.error("Error al registrar la habitación o al guardar la imagen: ", error);
+        console.error("Error al registrar la habitación o al guardar las imágenes: ", error);
         res.status(500).send({ mensaje: "Error al procesar la solicitud." });
     }
 };
+
 
 const actualizarHabitacion = async (req, res) => {
     const { id_habitacion } = req.params;
@@ -96,17 +104,18 @@ const listarHabitacionId = async(req, res) => {
     const params = [req.params.id];
     try {
         const sql = `
-            SELECT h.*, th.NOMBRE_TIPO, th.ID_TIPO_HABITACION, i.ID_IMG_HABITACION, i.NOMBRE_ARCHIVO, i.EXTENSION_ARCHIVO, encode(i.IMAGEN_HABITACION, 'base64') as IMAGEN_HABITACION
-            FROM TBL_HABITACIONES h
-            LEFT JOIN TBL_TIPOS_HABITACION th ON h.ID_TIPO_HABITACION = th.ID_TIPO_HABITACION
-            LEFT JOIN LATERAL (
-                SELECT ID_IMG_HABITACION, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO, IMAGEN_HABITACION
-                FROM TBL_IMAGENES_HABITACIONES
-                WHERE ID_HABITACION = h.ID_HABITACION
-                ORDER BY ID_IMG_HABITACION DESC
-                LIMIT 1
-            ) i ON true
-            WHERE h.ID_HABITACION = $1
+        SELECT h.*, th.NOMBRE_TIPO, th.ID_TIPO_HABITACION, 
+        array_agg(json_build_object(
+             'ID_IMG_HABITACION', i.ID_IMG_HABITACION,
+             'NOMBRE_ARCHIVO', i.NOMBRE_ARCHIVO,
+             'EXTENSION_ARCHIVO', i.EXTENSION_ARCHIVO,
+             'IMAGEN_HABITACION', encode(i.IMAGEN_HABITACION, 'base64')
+         )) AS IMAGENES_HABITACION
+        FROM TBL_HABITACIONES h
+        LEFT JOIN TBL_TIPOS_HABITACION th ON h.ID_TIPO_HABITACION = th.ID_TIPO_HABITACION
+        LEFT JOIN TBL_IMAGENES_HABITACIONES i ON h.ID_HABITACION = i.ID_HABITACION
+        WHERE h.ID_HABITACION = $1
+        GROUP BY h.ID_HABITACION, th.NOMBRE_TIPO, th.ID_TIPO_HABITACION;
         `;
         const result = await db.query(sql, params);
         res.json(result);
