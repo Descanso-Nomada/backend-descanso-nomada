@@ -53,7 +53,7 @@ const obtenerReservaciones = async (req, res) =>{
         JOIN
             TBL_USUARIOS AS u ON u.ID_USUARIO = r.ID_USUARIO
         WHERE
-            t.ID_HOTEL = $1 AND r.ESTADO = 'NO REVISADO';
+            t.ID_HOTEL = $1;
         `
         const result= await db.query(sql, idHotel);
         if (result.length >= 0) {
