@@ -1,25 +1,59 @@
 import { db } from '../database/conn.js';
+import { enviarCodigo } from '../helpers/sendEmail.js';
 import bcrypt from 'bcrypt';
+let codigoSeguridad = '';
 
 const sendCode = async (req, res) => {
-    const { email, securityCode, password, confirmPassword } = req.body;
-
-    if (password !== confirmPassword) {
-        return res.status(400).json({
-            res: false,
-            message: 'Las contraseñas no coinciden',
-        });
-    }
+    const { email } = req.body;
 
     try {
-        console.log(email, securityCode, password, confirmPassword);
 
         const userQuery = `
-            SELECT * FROM TBL_USUARIOS WHERE CORREO_ELECTRONICO = $1
+            SELECT * FROM TBL_USUARIOS WHERE CORREO = $1
+        `;
+        const userResult = await db.any(userQuery, [email]);
+
+        if (userResult.length === 0) {
+            return res.status(200).json({
+                res: false,
+                message: 'El correo electrónico no es válido',
+            });
+        } else {
+            const generateSecurityCode = () => {
+                return Math.floor(100000 + Math.random() * 900000).toString(); // Genera un código de 6 dígitos
+            };
+            codigoSeguridad = generateSecurityCode()
+            enviarCodigo(email, userResult[0].nombre_usuario, codigoSeguridad);
+            return res.status(200).json({
+                res: true,
+                message: 'Se envío el codigo de seguridad a: ' + email,
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            error: error.message,
+            message: 'Error al verificar el correo electrónico',
+        });
+    }
+};
+
+const changePass = async (req, res) => {
+    const { email, securityCode, password } = req.body;
+    
+    try {
+        const userQuery = `
+            SELECT * FROM TBL_USUARIOS WHERE CORREO = $1
         `;
         const userResult = await db.query(userQuery, [email, securityCode]);
 
-        if (userResult.rows.length === 0) {
+        if (userResult.length === 0) {
+            return res.status(400).json({
+                res: false,
+                message: 'Código de seguridad o correo electrónico incorrecto',
+            });
+        }
+
+        if(securityCode != codigoSeguridad){
             return res.status(400).json({
                 res: false,
                 message: 'Código de seguridad o correo electrónico incorrecto',
@@ -29,7 +63,7 @@ const sendCode = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const updateQuery = `
-            UPDATE TBL_USUARIOS SET CONTRASENA = $1 WHERE CORREO_ELECTRONICO = $2
+            UPDATE TBL_USUARIOS SET CONTRASENIA = $1 WHERE CORREO = $2
         `;
         await db.query(updateQuery, [hashedPassword, email]);
 
@@ -43,8 +77,5 @@ const sendCode = async (req, res) => {
             message: 'Error al actualizar la contraseña',
         });
     }
-};
-
-export {
-    sendCode
-};
+}
+export { sendCode, changePass };
