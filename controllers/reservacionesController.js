@@ -2,12 +2,12 @@ import {db} from "../database/conn.js";
 import { enviarFactura } from '../helpers/sendEmail.js';
 
 const crearReservacion = async (req, res) => {
+    console.log('tamo zqui');
     try {
 
-        // Obtener el precio de la habitación
         const precioHabitacionQuery = `SELECT PRECIO_NOCHE FROM TBL_HABITACIONES WHERE ID_HABITACION = $1`;
         const precioHabitacionResult = await db.query(precioHabitacionQuery, [req.body.id_habitacion]);
-        // console.log("Resultado de precioHabitacionQuery:", precioHabitacionResult);
+        //console.log("Resultado de precioHabitacionQuery:", precioHabitacionResult);
 
         if (precioHabitacionResult.length === 0) {
             return res.status(404).json({ msg: 'Habitación no encontrada' });
@@ -17,12 +17,12 @@ const crearReservacion = async (req, res) => {
 
         // Calcular el total
         const total = precioNoche * req.body.cant_noches;
-        // console.log(`Precio por noche: ${precioNoche}, Cantidad de noches: ${req.body.cant_noches}, Total: ${total}`);
+        //console.log(`Precio por noche: ${precioNoche}, Cantidad de noches: ${req.body.cant_noches}, Total: ${total}`);
 
         // Obtener la información del usuario
         const usuarioQuery = `SELECT CORREO, nombre_usuario FROM TBL_USUARIOS WHERE ID_USUARIO = $1`;
         const usuarioResult = await db.query(usuarioQuery, [req.userid]);
-        // console.log("Resultado de usuarioQuery:", usuarioResult);
+        //console.log("Resultado de usuarioQuery:", usuarioResult);
 
         if (usuarioResult.length === 0) {
             return res.status(404).json({ msg: 'Usuario no encontrado' });
@@ -33,15 +33,15 @@ const crearReservacion = async (req, res) => {
 
         // Obtener la información de la habitación
         const habitacionQuery = `SELECT 
-                                    A.ID_HABITACION,
-                                    B.NOMBRE_TIPO,
-                                    A.DESCRIPCION 
-                                    FROM TBL_HABITACIONES A
-                                    INNER JOIN TBL_TIPOS_HABITACION B
-                                    ON A.ID_HABITACION = B.id_tipo_habitacion
-                                    WHERE A.ID_HABITACION = $1`;
+        A.ID_HABITACION,
+        B.NOMBRE_TIPO,
+        A.DESCRIPCION 
+        FROM TBL_HABITACIONES A
+        INNER JOIN TBL_TIPOS_HABITACION B
+        ON A.ID_TIPO_HABITACION = B.ID_TIPO_HABITACION
+        WHERE A.ID_HABITACION = $1`;
+
         const habitacionResult = await db.query(habitacionQuery, [req.body.id_habitacion]);
-        // console.log("Resultado de habitacionQuery:", habitacionResult);
 
         if (habitacionResult.length === 0) {
             return res.status(404).json({ msg: 'Habitación no encontrada' });
