@@ -1,27 +1,82 @@
 import {db} from "../database/conn.js";
+import { enviarFactura } from '../helpers/sendEmail.js';
 
-const crearReservacion = async (req, res) =>{
+const crearReservacion = async (req, res) => {
     try {
-        const precio_habitacion = await db.query(`SELECT PRECIO_NOCHE FROM TBL_HABITACIONES WHERE ID_HABITACION = ${req.body.id_habitacion}`);
-        const total =(precio_habitacion[0].precio_noche)*req.body.cant_noches;
-        const params= [req.body.id_habitacion, req.userid, req.body.cant_noches, total, req.body.fecha_entrada, req.body.fecha_salida];
-        const sql= `
+
+        // Obtener el precio de la habitación
+        const precioHabitacionQuery = `SELECT PRECIO_NOCHE FROM TBL_HABITACIONES WHERE ID_HABITACION = $1`;
+        const precioHabitacionResult = await db.query(precioHabitacionQuery, [req.body.id_habitacion]);
+        // console.log("Resultado de precioHabitacionQuery:", precioHabitacionResult);
+
+        if (precioHabitacionResult.length === 0) {
+            return res.status(404).json({ msg: 'Habitación no encontrada' });
+        }
+
+        const precioNoche = precioHabitacionResult[0].precio_noche;
+
+        // Calcular el total
+        const total = precioNoche * req.body.cant_noches;
+        // console.log(`Precio por noche: ${precioNoche}, Cantidad de noches: ${req.body.cant_noches}, Total: ${total}`);
+
+        // Obtener la información del usuario
+        const usuarioQuery = `SELECT CORREO, nombre_usuario FROM TBL_USUARIOS WHERE ID_USUARIO = $1`;
+        const usuarioResult = await db.query(usuarioQuery, [req.userid]);
+        // console.log("Resultado de usuarioQuery:", usuarioResult);
+
+        if (usuarioResult.length === 0) {
+            return res.status(404).json({ msg: 'Usuario no encontrado' });
+        }
+
+        const usuarioCorreo = usuarioResult[0].correo;
+        const usuarioNombre = usuarioResult[0].nombre_usuario;
+
+        // Obtener la información de la habitación
+        const habitacionQuery = `SELECT 
+                                    A.ID_HABITACION,
+                                    B.NOMBRE_TIPO,
+                                    A.DESCRIPCION 
+                                    FROM TBL_HABITACIONES A
+                                    INNER JOIN TBL_TIPOS_HABITACION B
+                                    ON A.ID_HABITACION = B.id_tipo_habitacion
+                                    WHERE A.ID_HABITACION = $1`;
+        const habitacionResult = await db.query(habitacionQuery, [req.body.id_habitacion]);
+        // console.log("Resultado de habitacionQuery:", habitacionResult);
+
+        if (habitacionResult.length === 0) {
+            return res.status(404).json({ msg: 'Habitación no encontrada' });
+        }
+
+        const habitacionId = habitacionResult[0].id_habitacion;
+        const habitacionDescripcion = habitacionResult[0].descripcion;
+        const habitacionNombre_tipo = habitacionResult[0].nombre_tipo;
+
+        // Insertar la reservación en la base de datos
+        const params = [req.body.id_habitacion, req.userid, req.body.cant_noches, total, req.body.fecha_entrada, req.body.fecha_salida];
+        const sql = `
             INSERT INTO TBL_RESERVACIONES
             (ID_HABITACION, ID_USUARIO, CANT_NOCHES, TOTAL, FECHA_ENTRADA, FECHA_SALIDA)
             VALUES($1, $2, $3, $4, $5, $6)
-        `
+        `;
         await db.query(sql, params);
-        res.json({ 
-            message: 'Solicitud de reserva creado exitosamente',
+
+        // Enviar la factura
+        enviarFactura(usuarioCorreo, usuarioNombre, habitacionNombre_tipo, habitacionDescripcion, precioNoche, req.body.cant_noches, total);
+
+        // Enviar la respuesta
+        res.json({
+            message: 'Solicitud de reserva creada exitosamente',
             message2: 'Espere unos minutos mientras el hotel gestiona su solicitud'
-        }); 
+        });
     } catch (error) {
-        res.status(500).json({ 
-            error: error, 
-            msg: 'Error al registrar el Hotel'
+        console.error("Error en el proceso de creación de reservación:", error);
+        res.status(500).json({
+            error: error.message,
+            msg: 'Error al registrar la reservación'
         });
     }
-}
+};
+
 
 const obtenerReservaciones = async (req, res) =>{
     const idHotel = req.idHotel;

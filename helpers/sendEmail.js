@@ -165,4 +165,143 @@ function enviarCorreoConfirmarHotel (correo, usuario) {
     main().catch(console.error);
 }
 
-export { enviarCodigo, enviarCorreoReservación, enviarCorreoConfirmarHotel }
+function enviarFactura(correo, usuario, tipo_habitacion, descripcion, precio, cantidad, total) {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    const formattedDate = `${day}-${month}-${year}`;
+    const formattedTime = `${hours}:${minutes}:${seconds}`;
+
+    let isv = total*(15/100);
+
+    const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+            user: process.env.SEND_MAIL,
+            pass: process.env.KEY_MAIL
+        }
+    });
+
+    async function main() {
+    const info = await transporter.sendMail({
+        from: 'descansonomada@gmail.com',
+        to: correo, 
+        subject: `Hola ${usuario}`, 
+        text: "Factura", 
+        html: `
+        <div style="
+            font-family: system-ui;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            background-color: #f7f7f7;
+            border-radius: 10px;">
+            <h2 style="
+                text-align: center;
+                color: white;
+                background-color: rgba(0, 140, 255, 0.795);
+                padding: 10px;
+                border-radius: 5px;
+                margin-bottom: 20px;">
+                Detalle de la factura
+            </h2>
+            <p style="font-size: 15px; color: #333; margin-bottom: 20px;">
+                Hola ${usuario}, a continuación se muestra el detalle de tu factura:
+            </p>
+            <h3 style="
+                background-color: #c0caca;
+                color: black;
+                padding: 15px;
+                border-radius: 5px;
+                margin-bottom: 20px;">
+                Fecha: ${formattedDate} Hora: ${formattedTime}
+            </h3>
+            <div style="
+                border-radius: 5px;
+                background-color: #eeeeee;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">
+                <div style="margin-bottom: 10px;">
+                    <p style="font-size: 15px; color: #333; margin: 0;">
+                        <strong>Habitación:</strong>
+                    </p>
+                    <p style="font-size: 15px; color: #333; margin: 2; text-align: right;">
+                        ${tipo_habitacion}
+                    </p>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <p style="font-size: 15px; color: #333; margin: 0;">
+                        <strong>Precio:</strong>
+                    </p>
+                    <p style="font-size: 15px; color: #333; margin: 2; text-align: right;">
+                        L. ${precio}
+                    </p>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <p style="font-size: 15px; color: #333; margin: 0;">
+                        <strong>Descripción:</strong> 
+                    </p>
+                    <p style="font-size: 15px; color: #333; margin: 2; text-align: right;">
+                        ${descripcion}
+                    </p>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <p style="font-size: 15px; color: #333; margin: 0;">
+                        <strong>No. Noches:</strong> 
+                    </p>
+                    <p style="font-size: 15px; color: #333; margin: 2; text-align: right;">
+                        ${cantidad}
+                    </p>
+                </div>
+                <div style="padding: 15px; border-top: 2px solid #ddd; margin-top: 20px;">
+                    <div style="margin-bottom: 10px;">
+                        <p style="font-size: 15px; color: #333; margin: 0;">
+                            <strong>Subtotal:</strong>
+                        </p>
+                        <p style="font-size: 15px; color: #333; margin: 2; text-align: right;">
+                            L. ${total}
+                        </p>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <p style="font-size: 15px; color: #333; margin: 0;">
+                            <strong>ISV (15%):</strong>
+                        </p>
+                        <p style="font-size: 15px; color: #333; margin: 2; text-align: right;">
+                            L. ${isv}
+                        </p>
+                    </div>
+                    <hr style="color:#ddd"></hr>
+                    <div style="margin-bottom: 10px;">
+                        <p style="font-size: 15px; color: #333; margin: 0;">
+                            <strong>Total:</strong>
+                        </p>
+                        <p style="font-size: 15px; color: #333; margin: 2; text-align: right;">
+                            L. ${total + isv}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <p style="font-size: 15px; color: #333; text-align: center;">
+                Gracias por usar nuestros servicios
+            </p>
+            <p style="font-size: 15px; color: #333; text-align: center;">
+                <strong>DESCANSO NÓMADA 2024</strong>
+            </p>
+        </div>
+    `,
+    });
+    }
+    main().catch(console.error);
+}
+
+
+
+export { enviarCodigo, enviarCorreoReservación, enviarCorreoConfirmarHotel, enviarFactura }
