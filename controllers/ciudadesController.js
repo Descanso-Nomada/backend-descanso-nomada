@@ -23,7 +23,25 @@ const ciudadesPorMunicipios = async (req, res) =>{
 
 }
 
+const coloniasporCiudad = async(req,res) =>{
+    const id_ciudad =req.params.id;
+    const sql = `
+        SELECT * FROM TBL_COLONIAS
+        WHERE id_ciudad =$1
+    `
+    try {
+        const result = await db.query(sql, [id_ciudad]);
+        res.json([{
+            msg:`Colonias de la ciudad con id:${id_ciudad}`,
+            data:result
+        }])
+    } catch (error) {
+        res.status(500).json({ error: 'Error al mostrar las colonias' });
+    }
+}
+
 export{
     obtenerCiudades,
-    ciudadesPorMunicipios
+    ciudadesPorMunicipios,
+    coloniasporCiudad
 }
