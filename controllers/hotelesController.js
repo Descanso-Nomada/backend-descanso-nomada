@@ -229,7 +229,7 @@ const actualizarContrasenia = async (req, res) => {
     req.body.nueva_contrasenia,
   ];
   try {
-    const sql = "SELECT CONTRASENIA FROM TBL_HOTELES WHERE ID_USUARIO =$1";
+    const sql = "SELECT CONTRASENIA FROM TBL_HOTELES WHERE ID_HOTEL =$1";
     const getPass = await db.query(sql, params[0]);
     const passwordCorrect = await bcrypt.compare(
       params[2],
@@ -244,7 +244,7 @@ const actualizarContrasenia = async (req, res) => {
       const salt = await bcrypt.genSalt(15);
       const contraseniaHash = await bcrypt.hash(params[3], salt);
       const sql2 =
-        "UPDATE TBL_HOTELES SET CONTRASENIA = $2 WHERE ID_USUARIO = $1";
+        "UPDATE TBL_HOTELES SET CONTRASENIA = $2 WHERE ID_HOTEL = $1";
       const values = [params[0], contraseniaHash];
       await db.query(sql2, values);
       res.json({

@@ -39,7 +39,7 @@ const mostrarUsuarios = async (req, res) => {
 };
 
 const eliminarUsuario = async (req, res) => {
-    const values=[req.params.id_usario];
+    const values=[req.params.id];
     try {
     const sql = 'DELETE FROM TBL_USUARIOS WHERE ID_USUARIO = $1 RETURNING *';
     const result = await db.query(sql,values);
