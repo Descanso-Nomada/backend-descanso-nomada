@@ -1,4 +1,4 @@
--- Active: 1709788980542@@localhost@5432@descanso_nomada
+-- Active: 1710177975794@@localhost@5432@descanso_nomada
 CREATE OR REPLACE PROCEDURE sp_registrar_usuario(
     nombre_usuario_param VARCHAR(255),
     id_rol_param INT,
@@ -13,7 +13,25 @@ BEGIN
     INSERT INTO tbl_usuarios (nombre_usuario, id_rol, dni, correo, telefono, fecha_nacimiento, contrasenia)
     VALUES (nombre_usuario_param, id_rol_param, dni_param, correo_param, telefono_param, fecha_nacimiento_param, contrasenia_param);
 END;
+$$ LANGUAGE plpgsql;CREATE OR REPLACE PROCEDURE sp_registrar_usuario(
+    nombre_usuario_param VARCHAR(255),
+    id_rol_param INT,
+    dni_param VARCHAR(255),
+    correo_param VARCHAR(255),
+    telefono_param VARCHAR(255),
+    fecha_nacimiento_param DATE,
+    contrasenia_param VARCHAR(255),
+    imagen_usuario_param BYTEA,
+    nombre_archivo_param VARCHAR(250),
+    extension_archivo_param VARCHAR(20)
+)
+AS $$
+BEGIN
+    INSERT INTO tbl_usuarios (nombre_usuario, id_rol, dni, correo, telefono, fecha_nacimiento, contrasenia, imagen_usuario, nombre_archivo, extension_archivo)
+    VALUES (nombre_usuario_param, id_rol_param, dni_param, correo_param, telefono_param, fecha_nacimiento_param, contrasenia_param, imagen_usuario_param, nombre_archivo_param, extension_archivo_param);
+END;
 $$ LANGUAGE plpgsql;
+
 
 CREATE OR REPLACE PROCEDURE sp_registrar_hotel(
     ID_DIRECCION_param INTEGER,
