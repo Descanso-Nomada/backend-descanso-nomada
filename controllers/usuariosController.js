@@ -3,11 +3,14 @@ import { db } from '../database/conn.js';
 
 const registrarUsuario = async (req, res) => {
     const { nombre_usuario, id_rol, dni, correo, telefono, fecha_nacimiento, contrasenia } = req.body;
+    const imagen_usuario = req.file.buffer;
+    const nombre_archivo = req.file.originalname;
+    const extension_archivo = req.file.mimetype;
     try {
         const salt = await bcrypt.genSalt(15);
         const contraseniaHash = await bcrypt.hash(contrasenia, salt);
-        const sql = `CALL sp_registrar_usuario($1, $2, $3, $4, $5, $6, $7)`;
-        const values = [nombre_usuario, id_rol, dni, correo, telefono, fecha_nacimiento, contraseniaHash];
+        const sql = `CALL sp_registrar_usuario($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
+        const values = [nombre_usuario, id_rol, dni, correo, telefono, fecha_nacimiento, contraseniaHash, imagen_usuario, nombre_archivo, extension_archivo];
         await db.query(sql, values);
         res.json({ message: 'Usuario registrado con éxito' });
     } catch (error) {
@@ -24,7 +27,10 @@ const mostrarUsuarios = async (req, res) => {
                         NOMBRE_USUARIO, 
                         DNI, 
                         CORREO, 
-                        TELEFONO 
+                        TELEFONO,
+                        IMAGEN_USUARIO ,
+                        NOMBRE_ARCHIVO,
+                        EXTENSION_ARCHIVO, 
                     FROM TBL_USUARIOS 
                     WHERE ID_ROL = 2;
         `;

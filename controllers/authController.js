@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import { db } from '../database/conn.js';
 
 const auth = async (req, res) => {
-    let sql = `SELECT NOMBRE_USUARIO, CONTRASENIA, ID_ROL, ID_USUARIO FROM TBL_USUARIOS WHERE correo = $1`;
+    let sql = `SELECT NOMBRE_USUARIO, CONTRASENIA, ID_ROL, ID_USUARIO, IMAGEN_USUARIO, NOMBRE_ARCHIVO,EXTENSION_ARCHIVO FROM TBL_USUARIOS WHERE CORREO = $1`;
     let params = [req.body.correo, req.body.contrasenia];
 
     try {
@@ -33,7 +33,7 @@ const auth = async (req, res) => {
                     rolid:3,
                     autenticado: result[0].autenticado
                 };
-                generateTokenAndRespond(res, payload, 'Autenticación Exitosa para Hotel');
+                generateTokenAndRespond(res, payload, 'Autenticación Exitosa para Hotel', result);
                 return;
             }
         } else {
@@ -49,7 +49,7 @@ const auth = async (req, res) => {
                     rolid: result[0].id_rol,
                     userid: result[0].id_usuario
                 };
-                generateTokenAndRespond(res, payload, 'Autenticación Exitosa');
+                generateTokenAndRespond(res, payload, 'Autenticación Exitosa', result);
                 return;
             }
         }
@@ -59,7 +59,7 @@ const auth = async (req, res) => {
     }
 };
 
-function generateTokenAndRespond(res, payload, message) {
+function generateTokenAndRespond(res, payload, message, result) {
     const token = jwt.sign(payload, 'secret', { expiresIn: '1d' });
     const tokenCookie = cookie.serialize('token', token, {
         httpOnly: true,
@@ -72,7 +72,14 @@ function generateTokenAndRespond(res, payload, message) {
     res.setHeader('Set-Cookie', tokenCookie);
     res.json({
         msg: message,
-        user: payload
+        user:{
+            username: result[0].nombre_usuario,
+            rolid: result[0].id_rol,
+            userid: result[0].id_usuario,
+            extension_archivo: result[0].extension_archivo,
+            imagen_usuario:result[0].imagen_usuario,
+            nombre_archivo:result[0].nombre_archivo
+        },
     });
 }
 
