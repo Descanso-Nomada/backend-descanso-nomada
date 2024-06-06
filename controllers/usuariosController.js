@@ -65,34 +65,37 @@ const eliminarUsuario = async (req, res) => {
     }
     };
 
-const actualizarContrasenia = async (req, res) =>{
-    const params =[req.userid, req.body.correo, req.body.contrasenia, req.body.nueva_contrasenia]
-    try {
-        const sql ='SELECT CONTRASENIA FROM TBL_USUARIOS WHERE ID_USUARIO =$1'
-        const getPass= await db.query(sql,params[0]);
-        const passwordCorrect = await bcrypt.compare(params[2], getPass[0].contrasenia);
-        if (!passwordCorrect) {
-            res.status(201).json({
-                msg: 'Contraseña Incorrecta',
-            });
-            return;
-        }else{
-            const salt = await bcrypt.genSalt(15);
-            const contraseniaHash = await bcrypt.hash(params[3], salt);
-            const sql2='UPDATE TBL_USUARIOS SET CONTRASENIA = $2 WHERE ID_USUARIO = $1';
-            const values=[params[0],contraseniaHash];
-            await db.query(sql2, values);
-            res.json({
-                msg: 'Contraseña actualizada correctamente',
-            });
-           
+    const actualizarContrasenia = async (req, res) => {
+        const { correo, contrasenia, nueva_contrasenia } = req.body;
+        const params = [req.userid, correo, contrasenia, nueva_contrasenia];
+        try {
+            const sql = 'SELECT CONTRASENIA FROM TBL_USUARIOS WHERE ID_USUARIO = $1';
+            const getPass = await db.query(sql, [params[0]]);
+            const passwordCorrect = await bcrypt.compare(params[2], getPass[0].contrasenia);
+            if (!passwordCorrect) {
+                res.status(201).json({ msg: 'Contraseña Incorrecta' });
+                return;
+            } else {
+                const salt = await bcrypt.genSalt(15);
+                const contraseniaHash = await bcrypt.hash(params[3], salt);
+                const sql2 = 'UPDATE TBL_USUARIOS SET CONTRASENIA = $2 WHERE ID_USUARIO = $1';
+                const values = [params[0], contraseniaHash];
+                await db.query(sql2, values);
+    
+                if (req.file) {
+                    const { buffer, originalname, mimetype } = req.file;
+                    const imageSql = 'UPDATE TBL_USUARIOS SET IMAGEN_USUARIO = $2, NOMBRE_ARCHIVO = $3, EXTENSION_ARCHIVO = $4 WHERE ID_USUARIO = $1';
+                    const imageValues = [params[0], buffer, originalname, mimetype];
+                    await db.query(imageSql, imageValues);
+                }
+    
+                res.json({ msg: 'Contraseña e imagen actualizadas correctamente' });
+            }
+        } catch (error) {
+            console.error('Error al actualizar la contraseña', error);
+            res.status(500).json({ error: 'Error al actualizar la contraseña' });
         }
-    } catch (error) {
-        console.error('Error al actualizar la contraseña', error);
-        res.status(500).json({ error: 'Error al actualizar la contraseña' });
     }
-}
-
 export {
     registrarUsuario,
     eliminarUsuario,

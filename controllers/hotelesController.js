@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { db } from "../database/conn.js";
+import { enviarCorreoConfirmarHotel } from "../helpers/sendEmail.js";
 
 const registrarHotel = async (req, res) => {
   const {
@@ -81,10 +82,19 @@ const cambiarEstadoHotel = async (req, res) => {
   const id = req.params.id;
   try {
     const sql = `UPDATE TBL_HOTELES
-        SET AUTENTICADO = TRUE
-        WHERE ID_HOTEL = $1;
-        `;
+    SET AUTENTICADO = TRUE
+    WHERE ID_HOTEL = $1;
+    `;
     const result = await db.query(sql, id);
+
+    const sql2 = ` SELECT id_hotel,
+              nombre,
+              correo
+        FROM tbl_hoteles
+        WHERE id_hotel = $1;`;
+    const result2 = await db.query(sql2, id);
+    
+    enviarCorreoConfirmarHotel(result2[0].correo, result2[0].nombre);
 
     res.json(result);
   } catch (error) {

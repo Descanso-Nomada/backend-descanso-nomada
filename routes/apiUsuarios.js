@@ -10,7 +10,7 @@ import { validarCookie } from '../helpers/helpersCookie.js';
 
 apiUsuarios.post('/registro', upload.single('image'), validateRegistroUsuario, registrarUsuario);
 apiUsuarios.get('/clientes',validarCookie,mostrarUsuarios);
-apiUsuarios.put('',validarCookie,actualizarContrasenia);
+apiUsuarios.put('',validarCookie, upload.single('image'), actualizarContrasenia);
 apiUsuarios.delete('/:id',validarCookie,eliminarUsuario);
 export { 
     apiUsuarios 
