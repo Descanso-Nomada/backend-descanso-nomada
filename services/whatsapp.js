@@ -1,37 +1,42 @@
-import pkg from 'whatsapp-web.js';
-import qrcode from 'qrcode-terminal';
+import venom from 'venom-bot';
 
-const { Client, NoAuth } = pkg;
+const whatsapp = venom.create(
+  'sessionName',
+  (base64Qr, asciiQR, attempts, urlCode) => {
+    console.log(asciiQR);
+  },
+  undefined,
+  {
+    useChrome: false,
+    headless: 'new',
+    devtools: false,
+    browserArgs: ['--no-sandbox', '--disable-setuid-sandbox']
+  }
+);
 
-let client;
-
-export const initializeWhatsApp = () => {
-    client = new Client({
-        authStrategy: new NoAuth()  // Asegúrate de que NoAuth se esté utilizando aquí
-    });
-
-    client.on('qr', qr => {
-        qrcode.generate(qr, { small: true });
-        console.log('Escanea este código QR con tu WhatsApp para iniciar sesión');
-    });
-
-    client.on('ready', () => {
-        console.log('Cliente de WhatsApp está listo');
-    });
-
-    client.on('message_create', message => {
-        console.log(`Mensaje recibido: ${message.body}`);
-        if (message.body === '!ping') {
-            client.sendMessage(message.from, 'pong');
-        }
-    });
-
-    client.initialize();
-};
-
-export const sendMessage = (number, message) => {
-    if (!client) {
-        throw new Error('El cliente de WhatsApp no está inicializado');
+whatsapp.then((client) => {
+  client.onMessage((message) => {
+    if (message.body === 'Hi') {
+      client.sendText(message.from, 'Hello! This is a response from venom-bot.');
     }
-    client.sendMessage(number, message);
+  });
+
+  client.onIncomingCall((call) => {
+    client.sendText(call.peerJid, 'I cannot answer calls at the moment.');
+  });
+
+  console.log('Client is ready!');
+}).catch((err) => console.log(err));
+
+const sendMessage = async (number, message) => {
+  try {
+    const client = await whatsapp;
+    const formattedNumber = `${number}@c.us`;
+    await client.sendText(formattedNumber, message);
+    console.log('Message sent successfully');
+  } catch (err) {
+    console.error('Error when sending message:', err);
+  }
 };
+
+export { whatsapp, sendMessage };

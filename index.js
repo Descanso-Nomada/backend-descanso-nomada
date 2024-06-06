@@ -1,17 +1,17 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { apiUsuarios } from "./routes/apiUsuarios.js";
-import { apiHoteles } from "./routes/apiHoteles.js";
-import { apiAuth } from "./routes/apiAuth.js";
-import { apiDepartamentos } from "./routes/apiDepartamentos.js";
-import { apiMunicipios } from "./routes/apiMunicipios.js";
-import { apiCiudades } from "./routes/apiCiudades.js";
-import { apiHabitaciones } from "./routes/apiHabitaciones.js";
-import { apiImagenes } from "./routes/apiImagenes.js";
-import { apiReservaciones } from "./routes/apiReservaciones.js";
-import { apiResetPass } from "./routes/apiResetPass.js";
-import { initializeWhatsApp, sendMessage } from './services/whatsapp.js';  // Importar el módulo de WhatsApp
+import { apiUsuarios } from './routes/apiUsuarios.js';
+import { apiHoteles } from './routes/apiHoteles.js';
+import { apiAuth } from './routes/apiAuth.js';
+import { apiDepartamentos } from './routes/apiDepartamentos.js';
+import { apiMunicipios } from './routes/apiMunicipios.js';
+import { apiCiudades } from './routes/apiCiudades.js';
+import { apiHabitaciones } from './routes/apiHabitaciones.js';
+import { apiImagenes } from './routes/apiImagenes.js';
+import { apiReservaciones } from './routes/apiReservaciones.js';
+import { apiResetPass } from './routes/apiResetPass.js';
+import { whatsapp} from './services/whatsapp.js';
 
 const app = express();
 
@@ -37,17 +37,10 @@ app.use('/api/reset-password', apiResetPass);
 
 app.use(express.static('public'));
 
-// Inicializar WhatsApp
-initializeWhatsApp();
-
-app.post('/send-message', (req, res) => {
-    const { number, message } = req.body;
-    try {
-        sendMessage(number, message);
-        res.status(200).send('Mensaje enviado');
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
+whatsapp.then(client => {
+  console.log('WhatsApp client initialized');
+}).catch(err => {
+  console.error('Error initializing WhatsApp client:', err);
 });
 
 app.listen(3000, () => {
