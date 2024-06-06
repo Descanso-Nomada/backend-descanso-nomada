@@ -60,6 +60,7 @@ const auth = async (req, res) => {
 };
 
 function generateTokenAndRespond(res, payload, message, result) {
+    console.log(result[0]);
     const token = jwt.sign(payload, 'secret', { expiresIn: '1d' });
     const tokenCookie = cookie.serialize('token', token, {
         httpOnly: true,
@@ -68,18 +69,28 @@ function generateTokenAndRespond(res, payload, message, result) {
         maxAge: 60 * 60,
         path: '/'
     });
-
-    res.setHeader('Set-Cookie', tokenCookie);
-    res.json({
-        msg: message,
-        user:{
+    let data;
+    if(result[0].id_hotel==null){
+        data={
             username: result[0].nombre_usuario,
             rolid: result[0].id_rol,
             userid: result[0].id_usuario,
             extension_archivo: result[0].extension_archivo,
             imagen_usuario:result[0].imagen_usuario,
             nombre_archivo:result[0].nombre_archivo
-        },
+        }
+    }else{
+        data={
+            rolid:3,
+            id_hotel: result[0].id_hotel,
+            hotel_name: result[0].nombre,
+        }
+    }
+
+    res.setHeader('Set-Cookie', tokenCookie);
+    res.json({
+        msg: message,
+        user:data,
     });
 }
 
