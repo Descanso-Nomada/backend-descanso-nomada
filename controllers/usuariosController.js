@@ -30,7 +30,7 @@ const mostrarUsuarios = async (req, res) => {
                         TELEFONO,
                         IMAGEN_USUARIO ,
                         NOMBRE_ARCHIVO,
-                        EXTENSION_ARCHIVO, 
+                        EXTENSION_ARCHIVO 
                     FROM TBL_USUARIOS 
                     WHERE ID_ROL = 2;
         `;
