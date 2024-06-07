@@ -60,7 +60,6 @@ const auth = async (req, res) => {
 };
 
 function generateTokenAndRespond(res, payload, message, result) {
-    console.log(result[0]);
     const token = jwt.sign(payload, 'secret', { expiresIn: '1d' });
     const tokenCookie = cookie.serialize('token', token, {
         httpOnly: true,

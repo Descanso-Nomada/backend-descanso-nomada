@@ -170,14 +170,15 @@ const actualizarReservacion = async (req, res) => {
     `;
     try {
         const result = await db.query(sql, params);
-        if (result.rowCount > 0) {
+        if (result.length > 0) {
+            console.log('Entramos aqui mi doc');
             const usuarioReservacionQuery = `
                 SELECT 
                     R.ID_RESERVACION,
                     U.ID_USUARIO,
-                    U.NOMBRE AS nombre_usuario,
+                    U.NOMBRE_USUARIO,
                     U.CORREO AS correo_usuario,
-                    U.NO_TELEFONO AS telefono_usuario,
+                    U.TELEFONO AS telefono_usuario,
                     H.NOMBRE AS nombre_hotel,
                     H.NO_TELEFONO AS telefono_hotel,
                     H.NO_WHATSAPP AS whatsapp_hotel,
@@ -195,12 +196,12 @@ const actualizarReservacion = async (req, res) => {
                 WHERE R.ID_RESERVACION = $1
             `;
             const info = await db.query(usuarioReservacionQuery, [req.body.reservacionID]);
-            const message = `Estimado ${info.rows[0].nombre_usuario}, le informamos que su solicitud de reserva en ${info.rows[0].nombre_hotel} en la ${info.rows[0].nombre_tipo_habitacion} fue ${info.rows[0].estado}. Si tiene alguna consulta, se puede comunicar con el hotel al siguiente número: ${info.rows[0].telefono_hotel} o escribir al WhatsApp: ${info.rows[0].whatsapp_hotel}`;
+            const message = `Estimado ${info[0].nombre_usuario}, le informamos que su solicitud de reserva en ${info[0].nombre_hotel} en la ${info[0].nombre_tipo_habitacion} fue ${info[0].estado}. Si tiene alguna consulta, se puede comunicar con el hotel al siguiente número: ${info[0].telefono_hotel} o escribir al WhatsApp: ${info[0].whatsapp_hotel}`;
             console.log(info);
-            await sendMessage(`${info.rows[0].telefono_usuario}`, message);
+            await sendMessage(`${info[0].telefono_usuario}`, message);
             
             res.json({
-                data: result.rows[0],
+                data: result[0],
                 message: `Actualización exitosa: La reservación fue ${params[0]}`
             });
         } else {
