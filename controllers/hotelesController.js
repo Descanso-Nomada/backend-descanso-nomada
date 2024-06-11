@@ -265,26 +265,6 @@ const actualizarContrasenia = async (req, res) => {
   }
 };
 
-const mostrarCalificacionHotel = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const query = `
-      SELECT COUNT(*) AS CANTIDAD,
-        SUM(CALIFICACION) AS SUMATORIA
-      FROM TBL_CALIFICAR_HOTEL
-      WHERE id_hotel = $1
-        `;
-    const result = await db.query(query, id);
-
-    const data = result;
-
-    res.json(data);
-  } catch (error) {
-    console.error("Error al mostrar hoteles con imágenes:", error);
-    res.status(500).json({ error: "Error al mostrar hoteles con imágenes" });
-  }
-}
-
 export {
   registrarHotel,
   borrarHotel,
@@ -293,5 +273,4 @@ export {
   hotelesInactivos,
   cambiarEstadoHotel,
   actualizarContrasenia,
-  mostrarCalificacionHotel,
 };

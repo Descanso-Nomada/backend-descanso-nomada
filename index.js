@@ -1,17 +1,16 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { apiUsuarios } from "./routes/apiUsuarios.js";
-import { apiHoteles } from "./routes/apiHoteles.js";
-import { apiAuth } from "./routes/apiAuth.js";
-import { apiDepartamentos } from "./routes/apiDepartamentos.js";
-import { apiMunicipios } from "./routes/apiMunicipios.js";
-import { apiCiudades } from "./routes/apiCiudades.js";
-import { apiHabitaciones } from "./routes/apiHabitaciones.js";
-import { apiImagenes } from "./routes/apiImagenes.js";
-import { apiReservaciones } from "./routes/apiReservaciones.js";
-import { apiResetPass } from "./routes/apiResetPass.js";
-import { apiDashboard } from "./routes/apiDashboard.js";
+import { apiUsuarios } from './routes/apiUsuarios.js';
+import { apiHoteles } from './routes/apiHoteles.js';
+import { apiAuth } from './routes/apiAuth.js';
+import { apiDepartamentos } from './routes/apiDepartamentos.js';
+import { apiMunicipios } from './routes/apiMunicipios.js';
+import { apiCiudades } from './routes/apiCiudades.js';
+import { apiHabitaciones } from './routes/apiHabitaciones.js';
+import { apiImagenes } from './routes/apiImagenes.js';
+import { apiReservaciones } from './routes/apiReservaciones.js';
+import { apiResetPass } from './routes/apiResetPass.js';
 import { whatsapp} from './services/whatsapp.js';
 
 const app = express();
@@ -47,7 +46,6 @@ app.use('/api/habitaciones', apiHabitaciones);
 app.use('/api/imagenes', apiImagenes);
 app.use('/api/reservaciones', apiReservaciones);
 app.use('/api/reset-password', apiResetPass);
-app.use('/api/dashboard', apiDashboard);
 
 app.use(express.static('public'));
 
