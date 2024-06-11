@@ -36,7 +36,7 @@ const registrarHabitacion = async (req, res) => {
 const actualizarHabitacion = async (req, res) => {
     const { id_habitacion } = req.params;
     const { id_tipo_habitacion, descripcion, rentada, precio_noche, caracteristicas, publicacion_activa } = req.body;
-    
+
     const dataHabitacion = [id_tipo_habitacion, descripcion, rentada, precio_noche, caracteristicas, publicacion_activa, id_habitacion];
     const sqlHabitacion = `
         UPDATE TBL_HABITACIONES 
@@ -54,14 +54,25 @@ const actualizarHabitacion = async (req, res) => {
     try {
         await db.query(sqlHabitacion, dataHabitacion);
 
-        if (req.file) {
-            const { buffer, originalname, mimetype } = req.file;
-            const dataImagen = [buffer, originalname, mimetype, id_habitacion];
-            const sqlImagen = `
+        if (req.files && req.files.length > 0) {
+            const sqlDeleteImagenes = `
+                DELETE FROM TBL_IMAGENES_HABITACIONES
+                WHERE ID_HABITACION = $1
+            `;
+            await db.query(sqlDeleteImagenes, [id_habitacion]);
+
+            const sqlInsertImagen = `
                 INSERT INTO TBL_IMAGENES_HABITACIONES (IMAGEN_HABITACION, NOMBRE_ARCHIVO, EXTENSION_ARCHIVO, ID_HABITACION)
                 VALUES ($1, $2, $3, $4)
             `;
-            await db.query(sqlImagen, dataImagen);
+
+            const promises = req.files.slice(0, 5).map(file => {
+                const { buffer, originalname, mimetype } = file;
+                const dataImagen = [buffer, originalname, mimetype, id_habitacion];
+                return db.query(sqlInsertImagen, dataImagen);
+            });
+
+            await Promise.all(promises);
         }
 
         res.status(200).json({
@@ -69,7 +80,7 @@ const actualizarHabitacion = async (req, res) => {
             id_habitacion
         });
     } catch (error) {
-        console.error("Error al actualizar la habitación o al guardar la imagen: ", error);
+        console.error("Error al actualizar la habitación o al guardar las imágenes: ", error);
         res.status(500).send({ mensaje: "Error al procesar la solicitud." });
     }
 };
