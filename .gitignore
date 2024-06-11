@@ -41,7 +41,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
-/tokens
+tokens
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
