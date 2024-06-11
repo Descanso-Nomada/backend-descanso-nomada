@@ -4,7 +4,7 @@ let mensajesPendientes = {};
 
 const manejarMensaje = async (client, message) => {
   const numeroUsuario = message.from;
-
+  console.log('Inicio de chat con:',numeroUsuario)
   if (message.isGroupMsg) {
     return;
   }
@@ -15,6 +15,7 @@ const manejarMensaje = async (client, message) => {
     if (mensajesPendientes[numeroUsuario] && mensajesPendientes[numeroUsuario].id === message.id) {
       const ultimoMensaje = mensajesPendientes[numeroUsuario];
       delete mensajesPendientes[numeroUsuario];
+
 
       const usuario = await obtenerInfoUsuario(numeroUsuario);
       await procesarMensaje(client, ultimoMensaje, usuario);
@@ -156,6 +157,7 @@ const obtenerUltimaReservacion = async (idUsuario) => {
     LIMIT 1
   `;
   try {
+    console.log('Buscando última reservación para usuario ID:', idUsuario);
     const result = await db.query(sql, [idUsuario]);
     return result.length > 0 ? result[0] : null;
   } catch (error) {

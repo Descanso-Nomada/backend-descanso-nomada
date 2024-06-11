@@ -1,18 +1,18 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { apiUsuarios } from './routes/apiUsuarios.js';
-import { apiHoteles } from './routes/apiHoteles.js';
-import { apiAuth } from './routes/apiAuth.js';
-import { apiDepartamentos } from './routes/apiDepartamentos.js';
-import { apiMunicipios } from './routes/apiMunicipios.js';
-import { apiCiudades } from './routes/apiCiudades.js';
-import { apiHabitaciones } from './routes/apiHabitaciones.js';
-import { apiImagenes } from './routes/apiImagenes.js';
-import { apiReservaciones } from './routes/apiReservaciones.js';
-import { apiResetPass } from './routes/apiResetPass.js';
+import { apiUsuarios } from "./routes/apiUsuarios.js";
+import { apiHoteles } from "./routes/apiHoteles.js";
+import { apiAuth } from "./routes/apiAuth.js";
+import { apiDepartamentos } from "./routes/apiDepartamentos.js";
+import { apiMunicipios } from "./routes/apiMunicipios.js";
+import { apiCiudades } from "./routes/apiCiudades.js";
+import { apiHabitaciones } from "./routes/apiHabitaciones.js";
+import { apiImagenes } from "./routes/apiImagenes.js";
+import { apiReservaciones } from "./routes/apiReservaciones.js";
+import { apiResetPass } from "./routes/apiResetPass.js";
 import { apiDashboard } from "./routes/apiDashboard.js";
-import { whatsapp} from './services/whatsapp.js';
+import { startClient } from './services/whatsapp.js';
 
 const app = express();
 
@@ -51,11 +51,7 @@ app.use('/api/dashboard', apiDashboard);
 
 app.use(express.static('public'));
 
-whatsapp.then(client => {
-  console.log('WhatsApp client initialized');
-}).catch(err => {
-  console.error('Error initializing WhatsApp client:', err);
-});
+startClient();
 
 app.listen(3000, () => {
     console.log("Servidor en puerto 3000");
