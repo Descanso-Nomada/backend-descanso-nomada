@@ -30,7 +30,7 @@ const formatearFecha = (fecha) => {
 const procesarMensaje = async (client, message, usuario) => {
   const numeroUsuario = message.from;
   const respuestaInicial = `
-  Por favor, elige una opción:
+  Bienvenido al chatbot. Por favor, elige una opción:
   1. Ver historial de reservaciones.
   2. Ver estado de reservación.
   3. Información del usuario.
@@ -60,13 +60,13 @@ const esMensajeInicial = (mensaje) => {
 };
 
 const saludarUsuario = async (client, numeroUsuario, usuario) => {
-  const saludo = `Hola, ${usuario.nombre_usuario}, soy Eli el contestador automatico de descanso nomada\n ¿En qué puedo ayudarte hoy?`;
+  const saludo = `Hola, ${usuario.nombre_usuario}, soy Eli. ¿En qué puedo ayudarte hoy?`;
   await client.sendText(numeroUsuario, saludo);
 };
 
 const manejarOpcionesMenu = async (client, mensaje, usuario, numeroUsuario) => {
   const respuestaInicial = `
- Por favor, elige una opción:
+  Bienvenido al chatbot. Por favor, elige una opción:
   1. Ver historial de reservaciones.
   2. Ver estado de reservación.
   3. Información del usuario.
