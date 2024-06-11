@@ -13,7 +13,6 @@ const insertImgHotel = async (req,res) =>{
             result 
         })
     }catch (error) {
-        console.log(error);
         res.status(500).json({
           msg: error.message,
           statusCode: 500,
@@ -35,7 +34,6 @@ const insertImgHabitacion = async (req,res) =>{
             result 
         })
     }catch (error) {
-        console.log(error);
         res.status(500).json({
           msg: error.message,
           statusCode: 500,
@@ -57,7 +55,6 @@ const imagenesHotel = async(req, res) =>{
             result 
         })
     }catch (error) {
-        console.log(error);
         res.status(500).json({
           msg: error.message,
           statusCode: 500,
@@ -79,7 +76,6 @@ const imagenesHabitacion = async(req, res) =>{
             result 
         })
     }catch (error) {
-        console.log(error);
         res.status(500).json({
           msg: error.message,
           statusCode: 500,

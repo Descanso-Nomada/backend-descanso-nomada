@@ -35,8 +35,6 @@ const registrarHotel = async (req, res) => {
     ];
     const result = await db.query(sql, values);
     const id_hotel = result[0].id_hotel;
-    console.log(result);
-    console.log("ESTE ES EL ID DEL HOTEL:", id_hotel);
     if (req.file) {
       const { buffer, originalname, mimetype } = req.file;
       const dataImagen = [id_hotel, buffer, originalname, mimetype];
