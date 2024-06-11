@@ -239,4 +239,13 @@ VALUES
     ('Habitacion Accesible'),
     ('Habitacion Penthouse');
 
+INSERT INTO TBL_RESERVACIONES (ID_HABITACION,ID_USUARIO, CANT_NOCHES,  TOTAL, FECHA_ENTRADA, FECHA_SALIDA)
+VALUES (7, 1, 3, 450.00, '2024-05-14', '2024-05-17');
 
+-- POBLAR TABLA CALIFICACIONES
+INSERT INTO TBL_CALIFICAR_HOTEL (ID_HOTEL, ID_USUARIO, CALIFICACION)
+SELECT
+    (ARRAY[14,16,17,18,13,19,20,21,22,12,24,15])[floor(random() * 12 + 1)],
+    (ARRAY[43, 42, 39, 44, 45])[floor(random() * 5 + 1)],
+    floor(random() * 5 + 1)
+FROM generate_series(1, 1000);
