@@ -37,7 +37,44 @@ const usuarios_registradosXcategoria = async (req, res) => {
     }
 };
 
+const hotelesMasValorados = async (_req, res) => {
+    try {
+        const query = `
+            WITH HotelRatings AS (
+                SELECT 
+                    A.ID_HOTEL,
+                    A.NOMBRE,
+                    ROUND(AVG(B.CALIFICACION)) AS CALIFICACION_PROMEDIO,
+                    COUNT(B.ID_CALIFICACION_HOTEL) AS NUMERO_COMENTARIOS
+                FROM 
+                    TBL_HOTELES A
+                LEFT JOIN 
+                    TBL_CALIFICAR_HOTEL B ON A.ID_HOTEL = B.ID_HOTEL
+                GROUP BY 
+                    A.ID_HOTEL, A.NOMBRE
+            )
+            SELECT 
+                CALIFICACION_PROMEDIO,
+                COUNT(*) AS NUMERO_DE_HOTELES
+            FROM 
+                HotelRatings
+            GROUP BY 
+                CALIFICACION_PROMEDIO
+            ORDER BY 
+                CALIFICACION_PROMEDIO;
+        `;
+        const result = await db.query(query);
+        const data = result;
+        console.log(data );
+        res.json(data);
+    } catch (error) {
+        console.error('Error al mostrar resultados de habitaciones no rentadas vr. rentadas:', error);
+        res.status(500).json({ error: 'Error al mostrar hoteles' });
+    }
+};
+
 export {
     habitaciones_rentadaXnorentada,
-    usuarios_registradosXcategoria
+    usuarios_registradosXcategoria,
+    hotelesMasValorados
 };

@@ -79,10 +79,13 @@ UPDATE TBL_RESERVACIONES
         RETURNING *
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 SELECT * FROM TBL_RESERVACIONES_DETALLE
 =======
+=======
+>>>>>>> c34a20a3f7540a8b317447929436af6d4f02d006
 -- obtener datos para gáfico de red
 SELECT 
         A.ID_HOTEL,
@@ -94,5 +97,9 @@ FROM
 LEFT JOIN 
         TBL_CALIFICAR_HOTEL B ON A.ID_HOTEL = B.ID_HOTEL
 GROUP BY 
+<<<<<<< HEAD
+        A.ID_HOTEL, A.NOMBRE;
+>>>>>>> c34a20a3f7540a8b317447929436af6d4f02d006
+=======
         A.ID_HOTEL, A.NOMBRE;
 >>>>>>> c34a20a3f7540a8b317447929436af6d4f02d006
