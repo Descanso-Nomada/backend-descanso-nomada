@@ -196,6 +196,8 @@ const mostrarComentariosHabitacion = async (req, res) => {
             A.id_usuario,
             B.nombre_usuario,
             B.imagen_usuario,
+            B.nombre_archivo,
+            B.extension_archivo,
             A.fecha_comentario,
             A.comentario,
             A.calificacion
