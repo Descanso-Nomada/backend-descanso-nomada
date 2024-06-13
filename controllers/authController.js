@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import { db } from '../database/conn.js';
 
 const auth = async (req, res) => {
-    let sql = `SELECT NOMBRE_USUARIO, CONTRASENIA, ID_ROL, ID_USUARIO, IMAGEN_USUARIO, NOMBRE_ARCHIVO,EXTENSION_ARCHIVO FROM TBL_USUARIOS WHERE CORREO = $1`;
+    let sql = `SELECT NOMBRE_USUARIO, CONTRASENIA, ID_ROL, ID_USUARIO, CORREO, IMAGEN_USUARIO, NOMBRE_ARCHIVO,EXTENSION_ARCHIVO FROM TBL_USUARIOS WHERE CORREO = $1`;
     let params = [req.body.correo, req.body.contrasenia];
 
     try {
@@ -47,7 +47,8 @@ const auth = async (req, res) => {
                 const payload = {
                     username: result[0].nombre_usuario,
                     rolid: result[0].id_rol,
-                    userid: result[0].id_usuario
+                    userid: result[0].id_usuario,
+                    correo: result[0].correo
                 };
                 generateTokenAndRespond(res, payload, 'Autenticación Exitosa', result);
                 return;
@@ -76,13 +77,15 @@ function generateTokenAndRespond(res, payload, message, result) {
             userid: result[0].id_usuario,
             extension_archivo: result[0].extension_archivo,
             imagen_usuario:result[0].imagen_usuario,
-            nombre_archivo:result[0].nombre_archivo
+            nombre_archivo:result[0].nombre_archivo,
+            correo : result[0].correo
         }
     }else{
         data={
             rolid:3,
             id_hotel: result[0].id_hotel,
             hotel_name: result[0].nombre,
+            correo : result[0].correo
         }
     }
 
