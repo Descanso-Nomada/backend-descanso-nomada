@@ -103,10 +103,10 @@ const cerrarSesion = (req, res)=>{
     res.clearCookie('token', {httpOnly:true, expires: new Date(0)} );
     res.json({mensaje : "Cerrar Sesion"});
 }
-
+ 
 const verificarSesion = (req, res) =>{
-    if (req.user) {
-        res.json({ user: req.user });
+    if (req.user ||req.hotel) {
+        res.json({ user: req.user||req.hotel });
     } else {
         res.status(401).json({ msg: 'No autorizado' });
     }
