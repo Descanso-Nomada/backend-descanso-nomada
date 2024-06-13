@@ -26,10 +26,12 @@ const startClient = () => {
     clientInstance = client;
 
     client.onMessage((message) => {
+      console.log('Mensaje recibido:', message);
       manejarMensaje(client, message).catch(err => console.error('Error al manejar mensaje:', err));
     });
 
     client.onIncomingCall((call) => {
+      console.log('Llamada entrante:', call);
       client.sendText(call.peerJid, 'No puedo responder llamadas en este momento.');
     });
 
@@ -38,8 +40,6 @@ const startClient = () => {
     console.error('Error initializing WhatsApp client:', err);
   });
 };
-
-startClient();
 
 const sendMessage = async (numero, mensaje) => {
   try {
