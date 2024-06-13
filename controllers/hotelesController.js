@@ -294,15 +294,12 @@ const guardarCalificacionHotel = async (req, res) => {
       RETURNING *;
     `;
     const result = await db.query(query, [id_hotel, id_usuario, calificacion]);
-
-    // Responder con un mensaje claro y los datos insertados
     res.json({ message: 'Calificación guardada', data: result });
   } catch (error) {
     console.error("Error al guardar la calificación:", error);
     res.status(500).json({ error: "Error al guardar la calificación" });
   }
 }
-
 
 export {
   registrarHotel,
