@@ -285,6 +285,25 @@ const mostrarCalificacionHotel = async (req, res) => {
   }
 }
 
+const guardarCalificacionHotel = async (req, res) => {
+  const { id_hotel, id_usuario, calificacion } = req.body;
+  try {
+    const query = `
+      INSERT INTO TBL_CALIFICAR_HOTEL (ID_HOTEL, ID_USUARIO, CALIFICACION)
+      VALUES ($1, $2, $3)
+      RETURNING *;
+    `;
+    const result = await db.query(query, [id_hotel, id_usuario, calificacion]);
+
+    // Responder con un mensaje claro y los datos insertados
+    res.json({ message: 'Calificación guardada', data: result });
+  } catch (error) {
+    console.error("Error al guardar la calificación:", error);
+    res.status(500).json({ error: "Error al guardar la calificación" });
+  }
+}
+
+
 export {
   registrarHotel,
   borrarHotel,
@@ -294,4 +313,5 @@ export {
   cambiarEstadoHotel,
   actualizarContrasenia,
   mostrarCalificacionHotel,
+  guardarCalificacionHotel
 };
