@@ -16,6 +16,7 @@ apiHoteles.put('',validarCookieHotel, actualizarContrasenia);
 apiHoteles.delete('/:id', borrarHotel);
 apiHoteles.get('/calificacion/:id', mostrarCalificacionHotel);
 
+
 export {
     apiHoteles
 };

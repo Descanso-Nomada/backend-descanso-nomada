@@ -4,9 +4,11 @@ import multer from 'multer';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 import { validarCookieHotel } from "../helpers/helpersCookie.js";
-import { registrarHabitacion, actualizarHabitacion, listarHabitaciones, eliminarHabitacion, tipoHabitaciones, cambiarEstadoHabitacion, listarHabitacionId } from '../controllers/habitacionesController.js';
+import { registrarHabitacion, actualizarHabitacion, listarHabitaciones, eliminarHabitacion, tipoHabitaciones, cambiarEstadoHabitacion, listarHabitacionId, mostrarComentariosHabitacion, guardarComentario} from '../controllers/habitacionesController.js';
 
 apiHabitaciones.post('/registro', validarCookieHotel, upload.array('images', 5), registrarHabitacion);
+apiHabitaciones.post('/comentario', guardarComentario);
+apiHabitaciones.get('/comentarios/:id', mostrarComentariosHabitacion);
 apiHabitaciones.get('', validarCookieHotel, listarHabitaciones);
 apiHabitaciones.get('/usuarios/:id', listarHabitaciones);
 apiHabitaciones.get('/tipos', tipoHabitaciones);

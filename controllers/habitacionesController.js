@@ -187,6 +187,51 @@ const cambiarEstadoHabitacion = async (req, res) =>{
     }
 }
 
+const mostrarComentariosHabitacion = async (req, res) => {
+    const { id } = req.params;
+    try {
+    const query = `
+        SELECT A.id_comentario,
+            A.id_habitacion,
+            A.id_usuario,
+            B.nombre_usuario,
+            B.imagen_usuario,
+            B.nombre_archivo,
+            B.extension_archivo,
+            A.fecha_comentario,
+            A.comentario,
+            A.calificacion
+        FROM tbl_comentarios_habitacion A
+        INNER JOIN tbl_usuarios B
+        ON B.id_usuario = A.id_usuario
+        WHERE id_habitacion = $1
+        `;
+    const result = await db.query(query, id);
+    const data = result;
+
+    res.json(data);
+    } catch (error) {
+    console.error("Error al mostrar hoteles con imágenes:", error);
+    res.status(500).json({ error: "Error al mostrar hoteles con imágenes" });
+    }
+}
+
+const guardarComentario = async (req, res) => {
+    const { id_habitacion, id_usuario, fecha_comentario, comentario, calificacion } = req.body;
+    console.log(id_habitacion, id_usuario, fecha_comentario, comentario, calificacion);
+    try {   
+    const query = `
+        INSERT INTO TBL_COMENTARIOS_HABITACION (ID_HABITACION, ID_USUARIO, FECHA_COMENTARIO, COMENTARIO, CALIFICACION) VALUES
+        ($1, $2, $3, $4, $5);
+        `;
+    const result = await db.query(query, [id_habitacion, id_usuario, fecha_comentario, comentario, calificacion]);
+    const data = result;
+    res.json('Se agregó su comentario, Gracias por calificar nuestros servicios');
+    } catch (error) {
+        console.error("Error al guardar comentario:", error);
+        res.status(500).json({ error: "Error al guardar comentario" });
+    }
+}
 
 export{
     registrarHabitacion,
@@ -195,5 +240,7 @@ export{
     tipoHabitaciones,
     cambiarEstadoHabitacion,
     listarHabitacionId, 
-    actualizarHabitacion
+    actualizarHabitacion,
+    mostrarComentariosHabitacion,
+    guardarComentario
 }
