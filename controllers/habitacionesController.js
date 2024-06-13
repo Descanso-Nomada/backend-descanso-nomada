@@ -190,7 +190,7 @@ const cambiarEstadoHabitacion = async (req, res) =>{
 const mostrarComentariosHabitacion = async (req, res) => {
     const { id } = req.params;
     try {
-    const query = `
+      const query = `
         SELECT A.id_comentario,
             A.id_habitacion,
             A.id_usuario,
@@ -205,16 +205,21 @@ const mostrarComentariosHabitacion = async (req, res) => {
         INNER JOIN tbl_usuarios B
         ON B.id_usuario = A.id_usuario
         WHERE id_habitacion = $1
-        `;
-    const result = await db.query(query, id);
-    const data = result;
-
-    res.json(data);
+      `;
+      const result = await db.query(query, [id]);
+  
+      const data = result.map(row => ({
+        ...row,
+        imagen_usuario: row.imagen_usuario ? Buffer.from(row.imagen_usuario).toString('base64') : null,
+      }));
+  
+      res.json(data);
     } catch (error) {
-    console.error("Error al mostrar hoteles con imágenes:", error);
-    res.status(500).json({ error: "Error al mostrar hoteles con imágenes" });
+      console.error("Error al mostrar hoteles con imágenes:", error);
+      res.status(500).json({ error: "Error al mostrar hoteles con imágenes" });
     }
-}
+  };
+  
 
 const guardarComentario = async (req, res) => {
     const { id_habitacion, id_usuario, fecha_comentario, comentario, calificacion } = req.body;

@@ -21,28 +21,33 @@ const registrarUsuario = async (req, res) => {
 
 const mostrarUsuarios = async (req, res) => {
     try {
-        const query = `
-                    SELECT 
-                        ID_USUARIO, 
-                        NOMBRE_USUARIO, 
-                        DNI, 
-                        CORREO, 
-                        TELEFONO,
-                        IMAGEN_USUARIO ,
-                        NOMBRE_ARCHIVO,
-                        EXTENSION_ARCHIVO 
-                    FROM TBL_USUARIOS 
-                    WHERE ID_ROL = 2;
-        `;
-        const result = await db.query(query);
-        const data = result;
-
-        res.json(data);
+      const query = `
+        SELECT 
+            ID_USUARIO, 
+            NOMBRE_USUARIO, 
+            DNI, 
+            CORREO, 
+            TELEFONO,
+            IMAGEN_USUARIO,
+            NOMBRE_ARCHIVO,
+            EXTENSION_ARCHIVO 
+        FROM TBL_USUARIOS 
+        WHERE ID_ROL = 2;
+      `;
+      const result = await db.query(query);
+  
+      const data = result.map(row => ({
+        ...row,
+        imagen_usuario: row.imagen_usuario ? Buffer.from(row.imagen_usuario).toString('base64') : null,
+      }));
+  
+      res.json(data);
     } catch (error) {
-        console.error('Error al mostrar hoteles:', error);
-        res.status(500).json({ error: 'Error al mostrar hoteles' });
+      console.error('Error al mostrar usuarios:', error);
+      res.status(500).json({ error: 'Error al mostrar usuarios' });
     }
-};
+  };
+  
 
 const eliminarUsuario = async (req, res) => {
     const values=[req.params.id];
