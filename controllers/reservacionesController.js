@@ -29,7 +29,7 @@ const crearReservacion = async (req, res) => {
           B.NOMBRE_TIPO,
           A.DESCRIPCION,
           C.NOMBRE AS nombre_hotel,
-          C.NO_WHATSAPP AS whatsapp_hotel, 
+          C.NO_WHATSAPP AS whatsapp_hotel
         FROM TBL_HABITACIONES A
         INNER JOIN TBL_TIPOS_HABITACION B ON A.ID_TIPO_HABITACION = B.ID_TIPO_HABITACION
         INNER JOIN TBL_HOTELES C ON A.ID_HOTEL = C.ID_HOTEL
