@@ -78,7 +78,7 @@ const crearReservacion = async (req, res) => {
     const message = `Hola ${usuarioResult[0].nombre_usuario}, departe del equipo de descanso nomada te informamos que tu solicitud de reservación para la fecha ${req.body.fecha_entrada} con fecha de salida ${req.body.fecha_salida} en ${habitacionResult[0].nombre_hotel} ha sido generado exitosamente, cuando esta lista la respuesta del hotel se le enviara otra notificacion como esta.`;
     const messageHotel = `Hola ${habitacionResult[0].nombre_hotel}, le informamos que tiene una solicitud de reserva, por favor revise sus aréa de solicitudes lo mas pronto posible.`
     sendMessage(`${usuarioResult[0].telefono}`, message);
-    sendMessage(`${habitacionResult[0].whatsapp_hotel}`,messageHotel);
+    //sendMessage(`${habitacionResult[0].whatsapp_hotel}`,messageHotel);
 
     // Enviar la respuesta
     res.json({
