@@ -55,7 +55,7 @@ const auth = async (req, res) => {
             }
         }
     } catch (error) {
-        console.error("Error al autenticar: ", error);
+        // console.error("Error al autenticar: ", error);
         res.status(500).send({ mensaje: "Error al procesar la solicitud." });
     }
 };

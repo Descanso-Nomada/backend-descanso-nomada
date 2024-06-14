@@ -17,7 +17,7 @@ const obtenerHistorial = async (req, res) => {
         }
       
     } catch (error) {
-        console.log('Error al realizar la consulta', error);
+        // console.log('Error al realizar la consulta', error);
         res.status(500).json({ error: 'Error al realizar la consulta' });
     }
 }

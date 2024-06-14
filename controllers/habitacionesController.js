@@ -27,7 +27,7 @@ const registrarHabitacion = async (req, res) => {
             id_habitacion
         });
     } catch (error) {
-        console.error("Error al registrar la habitación o al guardar las imágenes: ", error);
+        // console.error("Error al registrar la habitación o al guardar las imágenes: ", error);
         res.status(500).send({ mensaje: "Error al procesar la solicitud." });
     }
 };
@@ -80,7 +80,7 @@ const actualizarHabitacion = async (req, res) => {
             id_habitacion
         });
     } catch (error) {
-        console.error("Error al actualizar la habitación o al guardar las imágenes: ", error);
+        // console.error("Error al actualizar la habitación o al guardar las imágenes: ", error);
         res.status(500).send({ mensaje: "Error al procesar la solicitud." });
     }
 };
@@ -105,7 +105,7 @@ const listarHabitaciones = async(req, res) => {
         const result = await db.query(sql, [id]);
         res.json(result);
     } catch (error) {
-        console.error("Error al obtener las habitaciones con tipos e imágenes: ", error);
+        // console.error("Error al obtener las habitaciones con tipos e imágenes: ", error);
         res.status(500).send({ mensaje: "Error al obtener las habitaciones con tipos e imágenes" });
     }
 };
@@ -131,7 +131,7 @@ const listarHabitacionId = async(req, res) => {
         const result = await db.query(sql, params);
         res.json(result);
     } catch (error) {
-        console.error("Error al obtener la habitacion con tipo e imágen: ", error);
+        // console.error("Error al obtener la habitacion con tipo e imágen: ", error);
         res.status(500).send({ mensaje: "Error al obtener la habitacion sdfasdf con tipo e imágen:" });
     }
 };
@@ -145,7 +145,7 @@ const eliminarHabitacion = async (req, res) => {
             data: result[0]
         });
     } catch (error) {
-      console.error('Error al eliminar la habitacion', error);
+    //   console.error('Error al eliminar la habitacion', error);
       res.status(500).json({ error: 'Error al eliminar la habitacion' });
     }
 }
@@ -167,7 +167,7 @@ const tipoHabitaciones = async (req, res) =>{
             })
         }
     } catch (error) {
-        console.error('Error al obtener los tipos de habitacion', error);
+        // console.error('Error al obtener los tipos de habitacion', error);
         res.status(500).json({ error: 'Error al obtener los tipos de habitacion' });
     }
 }
@@ -182,7 +182,7 @@ const cambiarEstadoHabitacion = async (req, res) =>{
             message: 'Estado actualizado exitosamente'
         })
     }catch (error) {
-        console.error('Error al actualizar el estado de la habitacion', error);
+        // console.error('Error al actualizar el estado de la habitacion', error);
         res.status(500).json({ error: 'Error al actualizar el estado de la habitacion' });
     }
 }
@@ -215,7 +215,7 @@ const mostrarComentariosHabitacion = async (req, res) => {
   
       res.json(data);
     } catch (error) {
-      console.error("Error al mostrar hoteles con imágenes:", error);
+    //   console.error("Error al mostrar hoteles con imágenes:", error);
       res.status(500).json({ error: "Error al mostrar hoteles con imágenes" });
     }
   };
@@ -223,7 +223,7 @@ const mostrarComentariosHabitacion = async (req, res) => {
 
 const guardarComentario = async (req, res) => {
     const { id_habitacion, id_usuario, fecha_comentario, comentario, calificacion } = req.body;
-    console.log(id_habitacion, id_usuario, fecha_comentario, comentario, calificacion);
+    // console.log(id_habitacion, id_usuario, fecha_comentario, comentario, calificacion);
     try {   
     const query = `
         INSERT INTO TBL_COMENTARIOS_HABITACION (ID_HABITACION, ID_USUARIO, FECHA_COMENTARIO, COMENTARIO, CALIFICACION) VALUES
@@ -233,7 +233,7 @@ const guardarComentario = async (req, res) => {
     const data = result;
     res.json('Se agregó su comentario, Gracias por calificar nuestros servicios');
     } catch (error) {
-        console.error("Error al guardar comentario:", error);
+        // console.error("Error al guardar comentario:", error);
         res.status(500).json({ error: "Error al guardar comentario" });
     }
 }

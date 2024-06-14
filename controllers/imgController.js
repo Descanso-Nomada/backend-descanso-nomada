@@ -94,7 +94,7 @@ const eliminarImgHabitacion = async () =>{
         });
   
     } catch (error) {
-      console.error('Error al eliminar la imagen:', error);
+    //   console.error('Error al eliminar la imagen:', error);
       res.status(500).json({ error: 'Error al eliminar la imagen' });
     }
 }
@@ -109,7 +109,7 @@ const eliminarImgHotel = async () =>{
         });
   
     } catch (error) {
-      console.error('Error al eliminar la imagen:', error);
+    //   console.error('Error al eliminar la imagen:', error);
       res.status(500).json({ error: 'Error al eliminar la imagen' });
     }
 }

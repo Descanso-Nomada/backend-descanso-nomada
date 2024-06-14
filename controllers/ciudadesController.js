@@ -5,7 +5,7 @@ const obtenerCiudades = async (req, res) =>{
         const result = await db.query('SELECT * FROM TBL_CIUDADES')
         res.json(result)
     } catch (error) {
-        console.error('Error al obtener los ciudades:', error);
+        // console.error('Error al obtener los ciudades:', error);
         res.status(500).json({ error: 'Error al mostrar municipios' });
     }
 }
@@ -17,7 +17,7 @@ const ciudadesPorMunicipios = async (req, res) =>{
         const result = await db.query(sql,id_municipio);
         res.json(result);
     } catch (error) {
-        console.error('Error al obtener las ciudades:', error);
+        // console.error('Error al obtener las ciudades:', error);
         res.status(500).json({ error: 'Error al mostrar ciudades' });
     }
 

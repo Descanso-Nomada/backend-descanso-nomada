@@ -122,7 +122,7 @@ const obtenerInfoUsuario = async (numeroUsuario) => {
     const result = await db.query(sql, [numeroFormateado]);
     return result.length > 0 ? result[0] : null;
   } catch (error) {
-    console.error('Error al obtener la información del usuario:', error);
+    // console.error('Error al obtener la información del usuario:', error);
     return null;
   }
 };
@@ -140,7 +140,7 @@ const obtenerHistorialReservaciones = async (idUsuario) => {
     const result = await db.query(sql, [idUsuario]);
     return result.length > 0 ? result : [];
   } catch (error) {
-    console.error('Error al obtener el historial de reservaciones:', error);
+    // console.error('Error al obtener el historial de reservaciones:', error);
     return [];
   }
 };
@@ -161,7 +161,7 @@ const obtenerUltimaReservacion = async (idUsuario) => {
     const result = await db.query(sql, [idUsuario]);
     return result.length > 0 ? result[0] : null;
   } catch (error) {
-    console.error('Error al obtener la última reservación:', error);
+    // console.error('Error al obtener la última reservación:', error);
     return null;
   }
 };

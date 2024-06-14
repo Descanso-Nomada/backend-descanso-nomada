@@ -14,7 +14,7 @@ const habitaciones_rentadaXnorentada = async (req, res) => {
         const { habitaciones_rentadas, habitaciones_no_rentadas } = data[0];
         res.json({ habitaciones_rentadas, habitaciones_no_rentadas });
     } catch (error) {
-        console.error('Error al mostrar resultados de habitaciones no rentadas vr. rentadas:', error);
+        // console.error('Error al mostrar resultados de habitaciones no rentadas vr. rentadas:', error);
         res.status(500).json({ error: 'Error al mostrar hoteles' });
     }
 };
@@ -32,7 +32,7 @@ const usuarios_registradosXcategoria = async (req, res) => {
         const { administradores, usuarios, hoteles } = data[0];
         res.json({ administradores, usuarios, hoteles });
     } catch (error) {
-        console.error('Error al mostrar resultados de habitaciones no rentadas vr. rentadas:', error);
+        // console.error('Error al mostrar resultados de habitaciones no rentadas vr. rentadas:', error);
         res.status(500).json({ error: 'Error al mostrar hoteles' });
     }
 };
@@ -65,10 +65,10 @@ const hotelesMasValorados = async (_req, res) => {
         `;
         const result = await db.query(query);
         const data = result;
-        console.log(data );
+        // console.log(data );
         res.json(data);
     } catch (error) {
-        console.error('Error al mostrar resultados de habitaciones no rentadas vr. rentadas:', error);
+        // console.error('Error al mostrar resultados de habitaciones no rentadas vr. rentadas:', error);
         res.status(500).json({ error: 'Error al mostrar hoteles' });
     }
 };

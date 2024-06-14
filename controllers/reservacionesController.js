@@ -3,7 +3,6 @@ import { enviarFactura } from "../helpers/sendEmail.js";
 import { sendMessage } from "../services/whatsapp.js";
 
 const crearReservacion = async (req, res) => {
-  console.log("tamo zqui");
   try {
     const precioHabitacionQuery = `SELECT PRECIO_NOCHE FROM TBL_HABITACIONES WHERE ID_HABITACION = $1`;
     const precioHabitacionResult = await db.query(precioHabitacionQuery, [
@@ -86,7 +85,7 @@ const crearReservacion = async (req, res) => {
       message2: "Espere unos minutos mientras el hotel gestiona su solicitud",
     });
   } catch (error) {
-    console.error("Error en el proceso de creación de reservación:", error);
+    // console.error("Error en el proceso de creación de reservación:", error);
     res.status(500).json({
       error: error.message,
       msg: "Error al registrar la reservación",
@@ -193,7 +192,6 @@ const actualizarReservacion = async (req, res) => {
   try {
     const result = await db.query(sql, params);
     if (result.length > 0) {
-      console.log("Entramos aqui mi doc");
       const usuarioReservacionQuery = `
                 SELECT 
                     R.ID_RESERVACION,
@@ -221,7 +219,7 @@ const actualizarReservacion = async (req, res) => {
         req.body.reservacionID,
       ]);
       const message = `Estimado ${info[0].nombre_usuario}, le informamos que su solicitud de reserva en ${info[0].nombre_hotel} en la ${info[0].nombre_tipo_habitacion} fue ${info[0].estado}. Si tiene alguna consulta, se puede comunicar con el hotel al siguiente número: ${info[0].telefono_hotel} o escribir al WhatsApp: ${info[0].whatsapp_hotel}`;
-      console.log(info);
+      // console.log(info);
       await sendMessage(`${info[0].telefono_usuario}`, message);
 
       res.json({
@@ -234,7 +232,7 @@ const actualizarReservacion = async (req, res) => {
         .json({ message: "No se encontró la reservación para actualizar." });
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     if (!res.headersSent) {
       res.status(500).json({ error: error.message });
     }

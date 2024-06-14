@@ -14,7 +14,7 @@ const registrarUsuario = async (req, res) => {
         await db.query(sql, values);
         res.json({ message: 'Usuario registrado con éxito' });
     } catch (error) {
-        console.error('Error al registrar el usuario:', error);
+        // console.error('Error al registrar el usuario:', error);
         res.status(500).json({ msg: 'Error al registrar el usuario', error });
     }
 }
@@ -43,7 +43,7 @@ const mostrarUsuarios = async (req, res) => {
   
       res.json(data);
     } catch (error) {
-      console.error('Error al mostrar usuarios:', error);
+    //   console.error('Error al mostrar usuarios:', error);
       res.status(500).json({ error: 'Error al mostrar usuarios' });
     }
   };
@@ -65,7 +65,7 @@ const eliminarUsuario = async (req, res) => {
     }
 
     } catch (error) {
-    console.error('Error al eliminar el usuario:', error);
+    // console.error('Error al eliminar el usuario:', error);
     res.status(500).json({ error: 'Error al eliminar el usuario' });
     }
     };
@@ -97,7 +97,7 @@ const eliminarUsuario = async (req, res) => {
                 res.json({ msg: 'Contraseña e imagen actualizadas correctamente' });
             }
         } catch (error) {
-            console.error('Error al actualizar la contraseña', error);
+            // console.error('Error al actualizar la contraseña', error);
             res.status(500).json({ error: 'Error al actualizar la contraseña' });
         }
     }
