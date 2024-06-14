@@ -222,7 +222,8 @@ const mostrarComentariosHabitacion = async (req, res) => {
   
 
 const guardarComentario = async (req, res) => {
-    const { id_habitacion, id_usuario, fecha_comentario, comentario, calificacion } = req.body;
+    const id_usuario =req.userid;
+    const { id_habitacion, fecha_comentario, comentario, calificacion } = req.body;
     // console.log(id_habitacion, id_usuario, fecha_comentario, comentario, calificacion);
     try {   
     const query = `
