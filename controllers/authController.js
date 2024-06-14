@@ -11,7 +11,26 @@ const auth = async (req, res) => {
     try {
         let result = await db.query(sql, req.body.correo);
         if(result.length == 0){
-            sql = `SELECT ID_HOTEL, NOMBRE, CORREO, CONTRASENIA, AUTENTICADO FROM TBL_HOTELES WHERE CORREO = $1`;
+            sql = `
+            SELECT 
+              h.ID_HOTEL, 
+              h.NOMBRE, 
+              h.CORREO, 
+              h.CONTRASENIA, 
+              h.AUTENTICADO, 
+              i.IMAGEN_HOTEL AS IMAGEN_USUARIO, 
+              i.NOMBRE_ARCHIVO, 
+              i.EXTENSION_ARCHIVO 
+            FROM 
+              TBL_HOTELES h
+            LEFT JOIN 
+              TBL_IMAGENES_HOTELES i
+            ON 
+              h.ID_HOTEL = i.ID_HOTEL 
+            WHERE 
+              h.CORREO = $1
+          `;
+          
             result = await db.query(sql, params);
             if(result.length == 0) {
                 res.json({
@@ -85,7 +104,10 @@ function generateTokenAndRespond(res, payload, message, result) {
             rolid:3,
             id_hotel: result[0].id_hotel,
             hotel_name: result[0].nombre,
-            correo : result[0].correo
+            correo : result[0].correo,
+            extension_archivo: result[0].extension_archivo,
+            imagen_usuario:result[0].imagen_usuario,
+            nombre_archivo:result[0].nombre_archivo
         }
     }
 
