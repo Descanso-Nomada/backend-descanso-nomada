@@ -54,13 +54,10 @@ const registrarHotel = async (req, res) => {
 
 const borrarHotel = async (req, res) => {
   const { id } = req.params;
-
   try {
     const result = await db.query("CALL sp_borrar_hotel($1)", [id]);
-
     res.json({ message: "Hotel borrado exitosamente" });
   } catch (error) {
-    // console.error("Error al borrar el hotel:", error);
     res.status(500).json({ error: "Error al borrar el hotel" });
   }
 };
@@ -71,7 +68,6 @@ const hotelesInactivos = async (req, res) => {
     const result = await db.query(sql);
     res.json(result);
   } catch (error) {
-    // console.error("Error al listar los hoteles:", error);
     res.status(500).json({ error: "Error al listar los hoteles" });
   }
 };

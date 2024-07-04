@@ -1,5 +1,6 @@
 import { db } from '../database/conn.js';
 
+// Obtener el conteo de habitaciones rentadas y no rentadas
 const habitaciones_rentadaXnorentada = async (req, res) => {
     try {
         const query = `
@@ -14,11 +15,11 @@ const habitaciones_rentadaXnorentada = async (req, res) => {
         const { habitaciones_rentadas, habitaciones_no_rentadas } = data[0];
         res.json({ habitaciones_rentadas, habitaciones_no_rentadas });
     } catch (error) {
-        // console.error('Error al mostrar resultados de habitaciones no rentadas vr. rentadas:', error);
         res.status(500).json({ error: 'Error al mostrar hoteles' });
     }
 };
 
+// Obtener el conteo de usuarios registrados por categoría
 const usuarios_registradosXcategoria = async (req, res) => {
     try {
         const query = `
@@ -32,11 +33,11 @@ const usuarios_registradosXcategoria = async (req, res) => {
         const { administradores, usuarios, hoteles } = data[0];
         res.json({ administradores, usuarios, hoteles });
     } catch (error) {
-        // console.error('Error al mostrar resultados de habitaciones no rentadas vr. rentadas:', error);
         res.status(500).json({ error: 'Error al mostrar hoteles' });
     }
 };
 
+// Obtener el conteo de hoteles más valorados por calificación promedio
 const hotelesMasValorados = async (_req, res) => {
     try {
         const query = `
@@ -65,10 +66,8 @@ const hotelesMasValorados = async (_req, res) => {
         `;
         const result = await db.query(query);
         const data = result;
-        // console.log(data );
         res.json(data);
     } catch (error) {
-        // console.error('Error al mostrar resultados de habitaciones no rentadas vr. rentadas:', error);
         res.status(500).json({ error: 'Error al mostrar hoteles' });
     }
 };

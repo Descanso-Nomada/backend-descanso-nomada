@@ -13,7 +13,7 @@ apiHoteles.get('', mostrarHoteles);
 apiHoteles.post('', upload.single('image'), validateRegistroHotel, registrarHotel);
 apiHoteles.put('/estado/:id', cambiarEstadoHotel);
 apiHoteles.put('',validarCookieHotel, actualizarContrasenia);
-apiHoteles.delete('/:id', borrarHotel);
+apiHoteles.delete('/:id', validarCookie, borrarHotel);
 apiHoteles.get('/calificacion/:id', mostrarCalificacionHotel);
 apiHoteles.post('/calificacion', guardarCalificacionHotel);
 
