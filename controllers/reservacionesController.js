@@ -2,6 +2,7 @@ import { db } from "../database/conn.js";
 import { enviarFactura } from "../helpers/sendEmail.js";
 import { sendMessage } from "../services/whatsapp.js";
 
+// Crear una nueva reservación
 const crearReservacion = async (req, res) => {
   try {
     const precioHabitacionQuery = `SELECT PRECIO_NOCHE FROM TBL_HABITACIONES WHERE ID_HABITACION = $1`;
@@ -34,7 +35,6 @@ const crearReservacion = async (req, res) => {
         INNER JOIN TBL_HOTELES C ON A.ID_HOTEL = C.ID_HOTEL
         WHERE A.ID_HABITACION = $1
       `;
-
     const habitacionResult = await db.query(habitacionQuery, [
       req.body.id_habitacion,
     ]);
@@ -73,11 +73,11 @@ const crearReservacion = async (req, res) => {
       total
     );
 
-    //Enviar notificacion por whatsapp
-    const message = `Hola ${usuarioResult[0].nombre_usuario}, departe del equipo de descanso nomada te informamos que tu solicitud de reservación para la fecha ${req.body.fecha_entrada} con fecha de salida ${req.body.fecha_salida} en ${habitacionResult[0].nombre_hotel} ha sido generado exitosamente, cuando esta lista la respuesta del hotel se le enviara otra notificacion como esta.`;
-    const messageHotel = `Hola ${habitacionResult[0].nombre_hotel}, le informamos que tiene una solicitud de reserva, por favor revise sus aréa de solicitudes lo mas pronto posible.`
+    // Enviar notificación por WhatsApp
+    const message = `Hola ${usuarioResult[0].nombre_usuario}, departe del equipo de descanso nómada te informamos que tu solicitud de reservación para la fecha ${req.body.fecha_entrada} con fecha de salida ${req.body.fecha_salida} en ${habitacionResult[0].nombre_hotel} ha sido generada exitosamente, cuando esta lista la respuesta del hotel se le enviará otra notificación como esta.`;
+    const messageHotel = `Hola ${habitacionResult[0].nombre_hotel}, le informamos que tiene una solicitud de reserva, por favor revise su área de solicitudes lo más pronto posible.`;
     sendMessage(`${usuarioResult[0].telefono}`, message);
-    //sendMessage(`${habitacionResult[0].whatsapp_hotel}`,messageHotel);
+    //sendMessage(`${habitacionResult[0].whatsapp_hotel}`, messageHotel);
 
     // Enviar la respuesta
     res.json({
@@ -85,7 +85,6 @@ const crearReservacion = async (req, res) => {
       message2: "Espere unos minutos mientras el hotel gestiona su solicitud",
     });
   } catch (error) {
-    // console.error("Error en el proceso de creación de reservación:", error);
     res.status(500).json({
       error: error.message,
       msg: "Error al registrar la reservación",
@@ -93,6 +92,7 @@ const crearReservacion = async (req, res) => {
   }
 };
 
+// Obtener todas las reservaciones de un hotel
 const obtenerReservaciones = async (req, res) => {
   const idHotel = req.idHotel;
   try {
@@ -125,21 +125,20 @@ const obtenerReservaciones = async (req, res) => {
         WHERE
             t.ID_HOTEL = $1;
         `;
-    const result = await db.query(sql, idHotel);
+    const result = await db.query(sql, [idHotel]);
     if (result.length >= 0) {
       res.json(result);
     } else {
-      res
-        .status(404)
-        .json({
-          message: "No hay reservaciones no revisadas para este hotel.",
-        });
+      res.status(404).json({
+        message: "No hay reservaciones no revisadas para este hotel.",
+      });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
+// Obtener todas las reservaciones de un usuario
 const reservacionesUsuario = async (req, res) => {
   let userid = req.params.userid;
   const sql = `
@@ -165,8 +164,8 @@ const reservacionesUsuario = async (req, res) => {
             TBL_RESERVACIONES.ID_USUARIO = $1;
     `;
   try {
-    const result = await db.query(sql, userid);
-    if (result >= 0) {
+    const result = await db.query(sql, [userid]);
+    if (result.length === 0) {
       res.json({
         message: "Usted no tiene reservaciones",
       });
@@ -181,6 +180,7 @@ const reservacionesUsuario = async (req, res) => {
   }
 };
 
+// Actualizar el estado de una reservación
 const actualizarReservacion = async (req, res) => {
   let params = [req.body.estado, req.body.reservacionID];
   const sql = `
@@ -219,7 +219,6 @@ const actualizarReservacion = async (req, res) => {
         req.body.reservacionID,
       ]);
       const message = `Estimado ${info[0].nombre_usuario}, le informamos que su solicitud de reserva en ${info[0].nombre_hotel} en la ${info[0].nombre_tipo_habitacion} fue ${info[0].estado}. Si tiene alguna consulta, se puede comunicar con el hotel al siguiente número: ${info[0].telefono_hotel} o escribir al WhatsApp: ${info[0].whatsapp_hotel}`;
-      // console.log(info);
       await sendMessage(`${info[0].telefono_usuario}`, message);
 
       res.json({
@@ -232,13 +231,13 @@ const actualizarReservacion = async (req, res) => {
         .json({ message: "No se encontró la reservación para actualizar." });
     }
   } catch (error) {
-    // console.log(error);
     if (!res.headersSent) {
       res.status(500).json({ error: error.message });
     }
   }
 };
 
+// Eliminar una reservación por ID
 const eliminarReservacion = async (req, res) => {
   const reservacionID = req.params.id;
   const sql = `
@@ -247,15 +246,13 @@ const eliminarReservacion = async (req, res) => {
         AND ESTADO = 'NO REVISADO'
     `;
   try {
-    const result = await db.query(sql, reservacionID);
+    const result = await db.query(sql, [reservacionID]);
     if (result.length > 0) {
       res.json(result);
     } else {
-      res
-        .status(404)
-        .json({
-          message: "No hay reservaciones no revisadas para este hotel.",
-        });
+      res.status(404).json({
+        message: "No hay reservaciones no revisadas para este hotel.",
+      });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });

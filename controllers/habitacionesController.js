@@ -1,9 +1,9 @@
 import { db } from '../database/conn.js';
 
+// Registrar una nueva habitación
 const registrarHabitacion = async (req, res) => {
     const { id_tipo_habitacion, capacidad, descripcion, caracteristicas, precio_noche } = req.body;
     const dataHabitacion = [req.idHotel, true, id_tipo_habitacion, capacidad, descripcion, false, caracteristicas, precio_noche];
-    
 
     try {
         const sqlHabitacion = 'SELECT registrar_habitacion($1, $2, $3, $4, $5, $6, $7, $8) AS id_habitacion';
@@ -27,12 +27,11 @@ const registrarHabitacion = async (req, res) => {
             id_habitacion
         });
     } catch (error) {
-        // console.error("Error al registrar la habitación o al guardar las imágenes: ", error);
         res.status(500).send({ mensaje: "Error al procesar la solicitud." });
     }
 };
 
-
+// Actualizar una habitación existente
 const actualizarHabitacion = async (req, res) => {
     const { id_habitacion } = req.params;
     const { id_tipo_habitacion, descripcion, rentada, precio_noche, caracteristicas, publicacion_activa } = req.body;
@@ -80,13 +79,12 @@ const actualizarHabitacion = async (req, res) => {
             id_habitacion
         });
     } catch (error) {
-        // console.error("Error al actualizar la habitación o al guardar las imágenes: ", error);
         res.status(500).send({ mensaje: "Error al procesar la solicitud." });
     }
 };
 
-
-const listarHabitaciones = async(req, res) => {
+// Listar todas las habitaciones de un hotel
+const listarHabitaciones = async (req, res) => {
     let id = req.idHotel || req.params.id;
     try {
         const sql = `
@@ -105,13 +103,12 @@ const listarHabitaciones = async(req, res) => {
         const result = await db.query(sql, [id]);
         res.json(result);
     } catch (error) {
-        // console.error("Error al obtener las habitaciones con tipos e imágenes: ", error);
         res.status(500).send({ mensaje: "Error al obtener las habitaciones con tipos e imágenes" });
     }
 };
 
-
-const listarHabitacionId = async(req, res) => {
+// Listar una habitación por ID
+const listarHabitacionId = async (req, res) => {
     const params = [req.params.id];
     try {
         const sql = `
@@ -131,66 +128,67 @@ const listarHabitacionId = async(req, res) => {
         const result = await db.query(sql, params);
         res.json(result);
     } catch (error) {
-        // console.error("Error al obtener la habitacion con tipo e imágen: ", error);
-        res.status(500).send({ mensaje: "Error al obtener la habitacion sdfasdf con tipo e imágen:" });
+        res.status(500).send({ mensaje: "Error al obtener la habitación con tipo e imagen." });
     }
 };
+
+// Eliminar una habitación por ID
 const eliminarHabitacion = async (req, res) => {
     const id = req.params.id;
     try {
-        const sql= "DELETE FROM TBL_HABICIONES WHERE ID_HABITACION =$1"
-        const result = await db.query(sql,id);
+        const sql = "DELETE FROM TBL_HABITACIONES WHERE ID_HABITACION = $1";
+        const result = await db.query(sql, [id]);
         res.json({
-            message: 'Habitacion eliminada con exito',
+            message: 'Habitación eliminada con éxito',
             data: result[0]
         });
     } catch (error) {
-    //   console.error('Error al eliminar la habitacion', error);
-      res.status(500).json({ error: 'Error al eliminar la habitacion' });
+        res.status(500).json({ error: 'Error al eliminar la habitación' });
     }
-}
+};
 
-const tipoHabitaciones = async (req, res) =>{
-    const sql=`
+// Obtener todos los tipos de habitaciones
+const tipoHabitaciones = async (req, res) => {
+    const sql = `
         SELECT * FROM TBL_TIPOS_HABITACION
-    `
+    `;
     try {
         const result = await db.query(sql);
-        if(result > 0){
+        if (result.length === 0) {
             res.json({
-                message:'No se encontro ningun tipo de habitaciones'
-            })
-        }else{
+                message: 'No se encontró ningún tipo de habitaciones'
+            });
+        } else {
             res.json({
-                data:result,
-                message:'Exito al obtener los tipos de habitaciones'
-            })
+                data: result,
+                message: 'Éxito al obtener los tipos de habitaciones'
+            });
         }
     } catch (error) {
-        // console.error('Error al obtener los tipos de habitacion', error);
-        res.status(500).json({ error: 'Error al obtener los tipos de habitacion' });
+        res.status(500).json({ error: 'Error al obtener los tipos de habitación' });
     }
-}
+};
 
-const cambiarEstadoHabitacion = async (req, res) =>{
-    const params =[req.params.id, req.body.estado]
-    const sql ='UPDATE TBL_HABITACIONES SET RENTADA = $2 WHERE ID_HABITACION = $1'
+// Cambiar el estado de una habitación
+const cambiarEstadoHabitacion = async (req, res) => {
+    const params = [req.params.id, req.body.estado];
+    const sql = 'UPDATE TBL_HABITACIONES SET RENTADA = $2 WHERE ID_HABITACION = $1';
     try {
-       const result = await db.query(sql, params)
+        const result = await db.query(sql, params);
         res.json({
-            data:result,
+            data: result,
             message: 'Estado actualizado exitosamente'
-        })
-    }catch (error) {
-        // console.error('Error al actualizar el estado de la habitacion', error);
-        res.status(500).json({ error: 'Error al actualizar el estado de la habitacion' });
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al actualizar el estado de la habitación' });
     }
-}
+};
 
+// Mostrar comentarios de una habitación por ID
 const mostrarComentariosHabitacion = async (req, res) => {
     const { id } = req.params;
     try {
-      const query = `
+        const query = `
         SELECT A.id_comentario,
             A.id_habitacion,
             A.id_usuario,
@@ -206,47 +204,43 @@ const mostrarComentariosHabitacion = async (req, res) => {
         ON B.id_usuario = A.id_usuario
         WHERE id_habitacion = $1
       `;
-      const result = await db.query(query, [id]);
-  
-      const data = result.map(row => ({
-        ...row,
-        imagen_usuario: row.imagen_usuario ? Buffer.from(row.imagen_usuario).toString('base64') : null,
-      }));
-  
-      res.json(data);
-    } catch (error) {
-    //   console.error("Error al mostrar hoteles con imágenes:", error);
-      res.status(500).json({ error: "Error al mostrar hoteles con imágenes" });
-    }
-  };
-  
+        const result = await db.query(query, [id]);
 
+        const data = result.map(row => ({
+            ...row,
+            imagen_usuario: row.imagen_usuario ? Buffer.from(row.imagen_usuario).toString('base64') : null,
+        }));
+
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: "Error al mostrar comentarios de la habitación" });
+    }
+};
+
+// Guardar un comentario para una habitación
 const guardarComentario = async (req, res) => {
-    const id_usuario =req.userid;
+    const id_usuario = req.userid;
     const { id_habitacion, fecha_comentario, comentario, calificacion } = req.body;
-    // console.log(id_habitacion, id_usuario, fecha_comentario, comentario, calificacion);
-    try {   
-    const query = `
+    try {
+        const query = `
         INSERT INTO TBL_COMENTARIOS_HABITACION (ID_HABITACION, ID_USUARIO, FECHA_COMENTARIO, COMENTARIO, CALIFICACION) VALUES
         ($1, $2, $3, $4, $5);
         `;
-    const result = await db.query(query, [id_habitacion, id_usuario, fecha_comentario, comentario, calificacion]);
-    const data = result;
-    res.json('Se agregó su comentario, Gracias por calificar nuestros servicios');
+        const result = await db.query(query, [id_habitacion, id_usuario, fecha_comentario, comentario, calificacion]);
+        res.json('Se agregó su comentario, Gracias por calificar nuestros servicios');
     } catch (error) {
-        // console.error("Error al guardar comentario:", error);
         res.status(500).json({ error: "Error al guardar comentario" });
     }
-}
+};
 
-export{
+export {
     registrarHabitacion,
     listarHabitaciones,
     eliminarHabitacion,
     tipoHabitaciones,
     cambiarEstadoHabitacion,
-    listarHabitacionId, 
+    listarHabitacionId,
     actualizarHabitacion,
     mostrarComentariosHabitacion,
     guardarComentario
-}
+};

@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { db } from "../database/conn.js";
 import { enviarCorreoConfirmarHotel } from "../helpers/sendEmail.js";
 
+// Registrar un nuevo hotel
 const registrarHotel = async (req, res) => {
   const {
     ID_DIRECCION,
@@ -44,7 +45,6 @@ const registrarHotel = async (req, res) => {
     }
     res.json({ message: "Hotel e imagen registrados con éxito" });
   } catch (error) {
-    // console.error(error);
     res.status(500).json({
       error: error.message,
       msg: "Error al registrar el Hotel y la imagen del hotel",
@@ -52,16 +52,18 @@ const registrarHotel = async (req, res) => {
   }
 };
 
+// Borrar un hotel
 const borrarHotel = async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await db.query("CALL sp_borrar_hotel($1)", [id]);
+    await db.query("CALL sp_borrar_hotel($1)", [id]);
     res.json({ message: "Hotel borrado exitosamente" });
   } catch (error) {
     res.status(500).json({ error: "Error al borrar el hotel" });
   }
 };
 
+// Obtener hoteles inactivos
 const hotelesInactivos = async (req, res) => {
   try {
     const sql = `SELECT * FROM TBL_HOTELES WHERE AUTENTICADO = FALSE`;
@@ -72,6 +74,7 @@ const hotelesInactivos = async (req, res) => {
   }
 };
 
+// Cambiar estado de autenticación de un hotel
 const cambiarEstadoHotel = async (req, res) => {
   const id = req.params.id;
   try {
@@ -79,7 +82,7 @@ const cambiarEstadoHotel = async (req, res) => {
     SET AUTENTICADO = TRUE
     WHERE ID_HOTEL = $1;
     `;
-    const result = await db.query(sql, id);
+    await db.query(sql, id);
 
     const sql2 = ` SELECT id_hotel,
               nombre,
@@ -90,13 +93,13 @@ const cambiarEstadoHotel = async (req, res) => {
     
     enviarCorreoConfirmarHotel(result2[0].correo, result2[0].nombre);
 
-    res.json(result);
+    res.json({ message: "Estado de autenticación actualizado" });
   } catch (error) {
-    // console.error("Error al cambiar el estado de autenticado del hotel: ",error);
     res.status(500).send({ mensaje: "Error al procesar la solicitud." });
   }
 };
 
+// Mostrar todos los hoteles
 const mostrarHoteles = async (req, res) => {
   try {
     const query = `
@@ -150,16 +153,13 @@ const mostrarHoteles = async (req, res) => {
     WHERE H.AUTENTICADO = TRUE;
         `;
     const result = await db.query(query);
-
-    const data = result;
-
-    res.json(data);
+    res.json(result);
   } catch (error) {
-    // console.error("Error al mostrar hoteles con imágenes:", error);
     res.status(500).json({ error: "Error al mostrar hoteles con imágenes" });
   }
 };
 
+// Mostrar un hotel por ID
 const mostrarHotel = async (req, res) => {
   const hotelId = parseInt(req.params.id);
   try {
@@ -213,15 +213,13 @@ LEFT JOIN (
 WHERE H.ID_HOTEL = $1 AND H.AUTENTICADO = TRUE;
     `;
     const result = await db.query(query, [hotelId]);
-
-    const data = result;
-    res.json(data);
+    res.json(result);
   } catch (error) {
-    // console.error("Error al mostrar el hotel:", error);
     res.status(500).json({ error: "Error al mostrar el hotel" });
   }
 };
 
+// Actualizar contraseña de un hotel
 const actualizarContrasenia = async (req, res) => {
   const params = [
     req.idHotel,
@@ -253,11 +251,11 @@ const actualizarContrasenia = async (req, res) => {
       });
     }
   } catch (error) {
-    // console.error("Error al actualizar la contraseña", error);
     res.status(500).json({ error: "Error al actualizar la contraseña" });
   }
 };
 
+// Mostrar calificación de un hotel
 const mostrarCalificacionHotel = async (req, res) => {
   const { id } = req.params;
   try {
@@ -268,16 +266,13 @@ const mostrarCalificacionHotel = async (req, res) => {
       WHERE id_hotel = $1
         `;
     const result = await db.query(query, id);
-
-    const data = result;
-
-    res.json(data);
+    res.json(result);
   } catch (error) {
-    // console.error("Error al mostrar hoteles con imágenes:", error);
-    res.status(500).json({ error: "Error al mostrar hoteles con imágenes" });
+    res.status(500).json({ error: "Error al mostrar calificación del hotel" });
   }
 }
 
+// Guardar calificación de un hotel
 const guardarCalificacionHotel = async (req, res) => {
   const { id_hotel, id_usuario, calificacion } = req.body;
   try {
@@ -289,7 +284,6 @@ const guardarCalificacionHotel = async (req, res) => {
     const result = await db.query(query, [id_hotel, id_usuario, calificacion]);
     res.json({ message: 'Calificación guardada', data: result });
   } catch (error) {
-    // console.error("Error al guardar la calificación:", error);
     res.status(500).json({ error: "Error al guardar la calificación" });
   }
 }

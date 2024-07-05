@@ -3,11 +3,11 @@ import { enviarCodigo } from '../helpers/sendEmail.js';
 import bcrypt from 'bcrypt';
 let codigoSeguridad = '';
 
+// Enviar código de seguridad al correo del usuario
 const sendCode = async (req, res) => {
     const { email } = req.body;
 
     try {
-
         const userQuery = `
             SELECT * FROM TBL_USUARIOS WHERE CORREO = $1
         `;
@@ -22,11 +22,11 @@ const sendCode = async (req, res) => {
             const generateSecurityCode = () => {
                 return Math.floor(100000 + Math.random() * 900000).toString(); // Genera un código de 6 dígitos
             };
-            codigoSeguridad = generateSecurityCode()
+            codigoSeguridad = generateSecurityCode();
             enviarCodigo(email, userResult[0].nombre_usuario, codigoSeguridad);
             return res.status(200).json({
                 res: true,
-                message: 'Se envío el codigo de seguridad a: ' + email,
+                message: 'Se envió el código de seguridad a: ' + email,
             });
         }
     } catch (error) {
@@ -37,6 +37,7 @@ const sendCode = async (req, res) => {
     }
 };
 
+// Cambiar la contraseña del usuario
 const changePass = async (req, res) => {
     const { email, securityCode, password } = req.body;
     
@@ -44,16 +45,9 @@ const changePass = async (req, res) => {
         const userQuery = `
             SELECT * FROM TBL_USUARIOS WHERE CORREO = $1
         `;
-        const userResult = await db.query(userQuery, [email, securityCode]);
+        const userResult = await db.query(userQuery, [email]);
 
-        if (userResult.length === 0) {
-            return res.status(400).json({
-                res: false,
-                message: 'Código de seguridad o correo electrónico incorrecto',
-            });
-        }
-
-        if(securityCode != codigoSeguridad){
+        if (userResult.length === 0 || securityCode !== codigoSeguridad) {
             return res.status(400).json({
                 res: false,
                 message: 'Código de seguridad o correo electrónico incorrecto',
@@ -77,5 +71,9 @@ const changePass = async (req, res) => {
             message: 'Error al actualizar la contraseña',
         });
     }
-}
-export { sendCode, changePass };
+};
+
+export { 
+    sendCode, 
+    changePass 
+};
