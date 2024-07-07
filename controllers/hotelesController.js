@@ -55,8 +55,9 @@ const registrarHotel = async (req, res) => {
 // Borrar un hotel
 const borrarHotel = async (req, res) => {
   const { id } = req.params;
+  const sql ='DELETE FROM TBL_HOTELES WHERE ID_HOTEL = $1';
   try {
-    await db.query("CALL sp_borrar_hotel($1)", [id]);
+    await db.query(sql, [id]);
     res.json({ message: "Hotel borrado exitosamente" });
   } catch (error) {
     res.status(500).json({ error: "Error al borrar el hotel" });

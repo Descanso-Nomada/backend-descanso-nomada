@@ -2,6 +2,7 @@ import nodemailer  from 'nodemailer';
 import dotenv from 'dotenv';
 dotenv.config();
 
+// Función para enviar el código de seguridad al correo del usuario
 function enviarCodigo (correo,usuario,codigo) {
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -59,6 +60,7 @@ function enviarCodigo (correo,usuario,codigo) {
     main().catch(console.error);
 }
 
+// Función para enviar un correo de confirmación de reservación al usuario
 function enviarCorreoReservación (correo,usuario, hotel, objetoHabitación) {
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -115,6 +117,7 @@ function enviarCorreoReservación (correo,usuario, hotel, objetoHabitación) {
     main().catch(console.error);
 }
 
+// Función para enviar un correo de confirmación de registro a un hotel
 function enviarCorreoConfirmarHotel (correo, usuario) {
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -165,6 +168,7 @@ function enviarCorreoConfirmarHotel (correo, usuario) {
     main().catch(console.error);
 }
 
+// Función para enviar una factura al correo del usuario
 function enviarFactura(correo, usuario, tipo_habitacion, descripcion, precio, cantidad, total) {
     const now = new Date();
     const year = now.getFullYear();

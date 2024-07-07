@@ -3,6 +3,7 @@ import { manejarMensaje } from './chatbootController.js';
 
 let clientInstance;
 
+//Creacion de la instancia del servicio de whatsapp
 const startClient = () => {
   venom.create(
     'nombreDeSesion',
@@ -18,7 +19,7 @@ const startClient = () => {
       headless: 'new',
       devtools: false,
       browserArgs: ['--no-sandbox', '--disable-setuid-sandbox'],
-      autoClose: 0, // Never close the session
+      autoClose: 0,
       disableWelcome: true,
       folderNameToken: 'tokens',
     }
@@ -41,6 +42,7 @@ const startClient = () => {
   });
 };
 
+//Funcion para el envio de mensajes
 const sendMessage = async (numero, mensaje) => {
   try {
     if (!clientInstance) {

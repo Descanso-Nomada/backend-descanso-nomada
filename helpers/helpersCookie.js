@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken';
 
+// Middleware para validar el token del usuario
 const validarCookie = async (req, res, next) => {
   const info = {
     operacion: false,
     payload: "Token no valido"
-  }
+  };
   try {
     const payload = jwt.verify(req.cookies.token, 'secret');
     info.operacion = true;
@@ -12,38 +13,36 @@ const validarCookie = async (req, res, next) => {
     req.userid = payload.userid;
     next();
   } catch (error) {
-    if (error.name == 'TokenExpiredError') {
-      res.status(401).json({ message: 'Token has expired',
-    carga:payload });
+    if (error.name === 'TokenExpiredError') {
+      res.status(401).json({ message: 'Token has expired', carga: info.payload });
     } else {
-      res.status(403).json({ message: 'Invalid token',
-      carga:payload });
+      res.status(403).json({ message: 'Invalid token', carga: info.payload });
     }
   }
-}
+};
 
-
+// Middleware para validar el token del hotel
 const validarCookieHotel = async (req, res, next) => {
   const info = {
     operacion: false,
     payload: "Token no valido"
-  }
+  };
   try {
     const payload = jwt.verify(req.cookies.token, 'secret');
     info.operacion = true;
     info.payload = payload;
-    req.idHotel = payload.idHotel; 
-    // console.log(payload.idHotel);
+    req.idHotel = payload.idHotel;
     next();
   } catch (error) {
-    if (error.name == 'TokenExpiredError') {
-      res.status(401).json({ message: 'Token has expired'});
+    if (error.name === 'TokenExpiredError') {
+      res.status(401).json({ message: 'Token has expired' });
     } else {
-      res.status(403).json({ message: 'Invalid token'});
+      res.status(403).json({ message: 'Invalid token' });
     }
   }
-}
+};
 
+// Middleware para validar el token tanto de usuario como de hotel
 const validarCookieCombinado = async (req, res, next) => {
   const token = req.cookies.token;
 
@@ -71,7 +70,7 @@ const validarCookieCombinado = async (req, res, next) => {
 };
 
 export {
-    validarCookie,
-    validarCookieHotel,
-    validarCookieCombinado
-  }
+  validarCookie,
+  validarCookieHotel,
+  validarCookieCombinado
+};

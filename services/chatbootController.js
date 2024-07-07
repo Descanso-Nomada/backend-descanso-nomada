@@ -2,6 +2,8 @@ import { db } from '../database/conn.js';
 
 let mensajesPendientes = {};
 
+
+//Funcion para el manejo entrante de mensages, ignorando por defecto los mensages grupales
 const manejarMensaje = async (client, message) => {
   const numeroUsuario = message.from;
   console.log('Inicio de chat con:',numeroUsuario)
@@ -15,19 +17,19 @@ const manejarMensaje = async (client, message) => {
     if (mensajesPendientes[numeroUsuario] && mensajesPendientes[numeroUsuario].id === message.id) {
       const ultimoMensaje = mensajesPendientes[numeroUsuario];
       delete mensajesPendientes[numeroUsuario];
-
-
       const usuario = await obtenerInfoUsuario(numeroUsuario);
       await procesarMensaje(client, ultimoMensaje, usuario);
     }
   }, 1000);
 };
 
+//Esta funcion nos ayuda a formatear la fecha de una forma mas legible
 const formatearFecha = (fecha) => {
   const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(fecha).toLocaleDateString('es-ES', opciones);
 };
 
+//Funcionamiento de las respuestas del chatboot, separado por funciones especificas para un mejor manejo de las respuestas
 const procesarMensaje = async (client, message, usuario) => {
   const numeroUsuario = message.from;
   const respuestaInicial = `
@@ -115,6 +117,8 @@ const manejarOpcionesMenu = async (client, mensaje, usuario, numeroUsuario) => {
   }
 };
 
+
+//Funcion para obtener la información del usuario con el que se esta chateando
 const obtenerInfoUsuario = async (numeroUsuario) => {
   const sql = `SELECT id_usuario, nombre_usuario, correo, dni, telefono FROM tbl_usuarios WHERE telefono = $1`;
   try {
@@ -122,11 +126,12 @@ const obtenerInfoUsuario = async (numeroUsuario) => {
     const result = await db.query(sql, [numeroFormateado]);
     return result.length > 0 ? result[0] : null;
   } catch (error) {
-    // console.error('Error al obtener la información del usuario:', error);
     return null;
   }
 };
 
+
+//Funcion para obtener las reservaciones del usuario con el que se esta chateando
 const obtenerHistorialReservaciones = async (idUsuario) => {
   const sql = `
     SELECT h.nombre AS nombre_hotel, th.nombre_tipo AS nombre_tipo_habitacion, rd.fecha_entrada, rd.fecha_salida, rd.total, rd.estado
@@ -140,11 +145,12 @@ const obtenerHistorialReservaciones = async (idUsuario) => {
     const result = await db.query(sql, [idUsuario]);
     return result.length > 0 ? result : [];
   } catch (error) {
-    // console.error('Error al obtener el historial de reservaciones:', error);
     return [];
   }
 };
 
+
+//Funcion para obtener la ultima reservacion del usuario con el que se esta chateando
 const obtenerUltimaReservacion = async (idUsuario) => {
   const sql = `
     SELECT h.nombre AS nombre_hotel, th.nombre_tipo AS nombre_tipo_habitacion, r.fecha_entrada, r.fecha_salida, r.total, r.estado
@@ -161,7 +167,6 @@ const obtenerUltimaReservacion = async (idUsuario) => {
     const result = await db.query(sql, [idUsuario]);
     return result.length > 0 ? result[0] : null;
   } catch (error) {
-    // console.error('Error al obtener la última reservación:', error);
     return null;
   }
 };
