@@ -61,7 +61,7 @@ const esMensajeInicial = (mensaje) => {
   const mensajesIniciales = ['hi', 'hola', 'buen dia', 'hola buen dia', 'menú', 'menu'];
   return mensajesIniciales.includes(mensaje);
 };
-
+ 
 const saludarUsuario = async (client, numeroUsuario, usuario) => {
   const saludo = `Hola, ${usuario.nombre_usuario}, soy Eli. ¿En qué puedo ayudarte hoy?`;
   await client.sendText(numeroUsuario, saludo);
