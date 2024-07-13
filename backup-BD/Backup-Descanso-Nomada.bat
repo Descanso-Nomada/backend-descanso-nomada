@@ -42,4 +42,4 @@ if %ERRORLEVEL% neq 0 (
 set PGPASSWORD=
 
 echo Backup completed successfully.
-:: pause
+pause
