@@ -138,6 +138,62 @@ const obtenerReservaciones = async (req, res) => {
   }
 };
 
+
+const obtenerTodasLasResevaciones = async (req, res) =>{
+  const sql = `
+  SELECT
+      r.*,
+      u.NOMBRE_USUARIO,
+      u.CORREO,
+      u.TELEFONO,
+      h.ID_HABITACION,
+      h.ID_HOTEL,
+      h.PUBLICACION_ACTIVA,
+      j.ID_TIPO_HABITACION,
+      j.NOMBRE_TIPO,
+      h.CAPACIDAD,
+      h.DESCRIPCION,
+      h.RENTADA,
+      h.CARACTERISTICAS,
+      h.PRECIO_NOCHE,
+      t.ID_DIRECCION,
+      t.REFERENCIA_LOCAL,
+      t.NOMBRE AS NOMBRE_HOTEL,
+      t.RTN,
+      t.NO_TELEFONO AS TELEFONO_HOTEL,
+      t.NO_WHATSAPP AS WHATSAPP_HOTEL,
+      t.CORREO AS CORREO_HOTEL,
+      TO_CHAR(r.FECHA_ENTRADA, 'YYYY-MM-DD') AS FECHA_ENTRADA,
+      TO_CHAR(r.FECHA_SALIDA, 'YYYY-MM-DD') AS FECHA_SALIDA
+  FROM
+      TBL_RESERVACIONES AS r
+  JOIN
+      TBL_HABITACIONES AS h ON r.ID_HABITACION = h.ID_HABITACION
+  JOIN
+      TBL_HOTELES AS t ON h.ID_HOTEL = t.ID_HOTEL
+  JOIN 
+      TBL_TIPOS_HABITACION AS j ON j.ID_TIPO_HABITACION = h.ID_TIPO_HABITACION
+  JOIN
+      TBL_USUARIOS AS u ON u.ID_USUARIO = r.ID_USUARIO;
+`;
+
+
+try {
+const result = await db.query(sql);
+if (result.length >= 0) {
+  res.json(result);
+} else {
+  res.status(404).json({
+    message: "No hay reservaciones aun.",
+  });
+}
+} catch (error) {
+res.status(500).json({ error: error.message });
+}
+}
+
+
+
 // Obtener todas las reservaciones de un usuario
 const reservacionesUsuario = async (req, res) => {
   let userid = req.params.userid;
@@ -262,6 +318,7 @@ const eliminarReservacion = async (req, res) => {
 export {
   crearReservacion,
   obtenerReservaciones,
+  obtenerTodasLasResevaciones,
   reservacionesUsuario,
   actualizarReservacion,
   eliminarReservacion,
