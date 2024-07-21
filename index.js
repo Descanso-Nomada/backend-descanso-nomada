@@ -51,7 +51,7 @@ app.use('/api/dashboard', apiDashboard);
 
 app.use(express.static('public'));
 
-startClient();
+//startClient();
 
 app.listen(3000, () => {
     console.log("Servidor en puerto 3000");

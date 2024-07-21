@@ -3,7 +3,16 @@ import { db } from '../database/conn.js';
 // Obtener todas las ciudades
 const obtenerCiudades = async (req, res) => {
     try {
-        const result = await db.query('SELECT * FROM TBL_CIUDADES');
+        const result = await db.query(`
+            SELECT 
+                c.*,        
+                m.ID_DEPTO  
+            FROM 
+                TBL_CIUDADES c
+            JOIN 
+                TBL_MUNICIPIOS m ON c.ID_MUNICIPIO = m.ID_MUNICIPIO;
+    
+        `);
         res.json(result);
     } catch (error) {
         res.status(500).json({ error: 'Error al mostrar municipios' });
