@@ -55,7 +55,7 @@ const registrarHotel = async (req, res) => {
 // Borrar un hotel
 const borrarHotel = async (req, res) => {
   const { id } = req.params;
-  const sql ='DELETE FROM TBL_HOTELES WHERE ID_HOTEL = $1';
+  const sql = "DELETE FROM TBL_HOTELES WHERE ID_HOTEL = $1";
   try {
     await db.query(sql, [id]);
     res.json({ message: "Hotel borrado exitosamente" });
@@ -91,7 +91,7 @@ const cambiarEstadoHotel = async (req, res) => {
         FROM tbl_hoteles
         WHERE id_hotel = $1;`;
     const result2 = await db.query(sql2, id);
-    
+
     enviarCorreoConfirmarHotel(result2[0].correo, result2[0].nombre);
 
     res.json({ message: "Estado de autenticación actualizado" });
@@ -104,55 +104,64 @@ const cambiarEstadoHotel = async (req, res) => {
 const mostrarHoteles = async (req, res) => {
   try {
     const query = `
-    SELECT
-        H.ID_HOTEL, 
-        H.ID_DIRECCION AS ID_CIUDAD,
-        CONCAT(
-            COALESCE(CIU.NOMBRE_CIUDAD, 'N/A'), ', ', 
-            COALESCE(MUN.NOMBRE_MUNICIPIO, 'N/A'), ', ', 
-            COALESCE(DEP.NOMBRE_DEPTO, 'N/A')
-        ) AS DIRECCION_COMPLETA,
-        H.REFERENCIA_LOCAL,
-        DEP.ID_DEPTO,
-        CIU.ID_CIUDAD,
-        H.NOMBRE, 
-        H.RTN, 
-        H.NO_TELEFONO, 
-        H.NO_WHATSAPP, 
-        H.CORREO,
-        LATEST_IMG.ID_IMG_HOTEL,
-        encode(LATEST_IMG.IMAGEN_HOTEL, 'base64') AS IMAGEN_HOTEL,
-        LATEST_IMG.NOMBRE_ARCHIVO,
-        LATEST_IMG.EXTENSION_ARCHIVO,
-        COALESCE(HABITACIONES_DISPONIBLES.CANTIDAD_DISPONIBLES, 0) AS CANTIDAD_HABITACIONES_DISPONIBLES
-    FROM TBL_HOTELES AS H
-    LEFT JOIN TBL_CIUDADES AS CIU ON H.ID_DIRECCION = CIU.ID_CIUDAD
-    LEFT JOIN TBL_MUNICIPIOS AS MUN ON MUN.ID_MUNICIPIO = CIU.ID_MUNICIPIO
-    LEFT JOIN TBL_DEPARTAMENTOS AS DEP ON DEP.ID_DEPTO = MUN.ID_DEPTO
-    LEFT JOIN (
-        SELECT
-            IH.ID_HOTEL,
-            IH.ID_IMG_HOTEL,
-            IH.IMAGEN_HOTEL,
-            IH.NOMBRE_ARCHIVO,
-            IH.EXTENSION_ARCHIVO
-        FROM TBL_IMAGENES_HOTELES IH
-        INNER JOIN (
-            SELECT ID_HOTEL, MAX(ID_IMG_HOTEL) AS MAX_ID_IMG_HOTEL
-            FROM TBL_IMAGENES_HOTELES
-            GROUP BY ID_HOTEL
-        ) AS MAX_IMG ON IH.ID_HOTEL = MAX_IMG.ID_HOTEL AND IH.ID_IMG_HOTEL = MAX_IMG.MAX_ID_IMG_HOTEL
-    ) AS LATEST_IMG ON H.ID_HOTEL = LATEST_IMG.ID_HOTEL
-    LEFT JOIN (
-        SELECT
-            ID_HOTEL,
-            COUNT(*) AS CANTIDAD_DISPONIBLES
-        FROM TBL_HABITACIONES
-        WHERE PUBLICACION_ACTIVA = TRUE AND RENTADA = FALSE
-        GROUP BY ID_HOTEL
-    ) AS HABITACIONES_DISPONIBLES ON H.ID_HOTEL = HABITACIONES_DISPONIBLES.ID_HOTEL
-    WHERE H.AUTENTICADO = TRUE;
-        `;
+      SELECT
+          H.ID_HOTEL, 
+          H.ID_DIRECCION AS ID_CIUDAD,
+          CONCAT(
+              COALESCE(CIU.NOMBRE_CIUDAD, 'N/A'), ', ', 
+              COALESCE(MUN.NOMBRE_MUNICIPIO, 'N/A'), ', ', 
+              COALESCE(DEP.NOMBRE_DEPTO, 'N/A')
+          ) AS DIRECCION_COMPLETA,
+          H.REFERENCIA_LOCAL,
+          DEP.ID_DEPTO,
+          CIU.ID_CIUDAD,
+          H.NOMBRE, 
+          H.RTN, 
+          H.NO_TELEFONO, 
+          H.NO_WHATSAPP, 
+          H.CORREO,
+          LATEST_IMG.ID_IMG_HOTEL,
+          encode(LATEST_IMG.IMAGEN_HOTEL, 'base64') AS IMAGEN_HOTEL,
+          LATEST_IMG.NOMBRE_ARCHIVO,
+          LATEST_IMG.EXTENSION_ARCHIVO,
+          COALESCE(HABITACIONES_DISPONIBLES.CANTIDAD_DISPONIBLES, 0) AS CANTIDAD_HABITACIONES_DISPONIBLES,
+          COALESCE(HABITACIONES.CARACTERISTICAS, 'N/A') AS CARACTERISTICAS_HABITACIONES
+      FROM TBL_HOTELES AS H
+      LEFT JOIN TBL_CIUDADES AS CIU ON H.ID_DIRECCION = CIU.ID_CIUDAD
+      LEFT JOIN TBL_MUNICIPIOS AS MUN ON MUN.ID_MUNICIPIO = CIU.ID_MUNICIPIO
+      LEFT JOIN TBL_DEPARTAMENTOS AS DEP ON DEP.ID_DEPTO = MUN.ID_DEPTO
+      LEFT JOIN (
+          SELECT
+              IH.ID_HOTEL,
+              IH.ID_IMG_HOTEL,
+              IH.IMAGEN_HOTEL,
+              IH.NOMBRE_ARCHIVO,
+              IH.EXTENSION_ARCHIVO
+          FROM TBL_IMAGENES_HOTELES IH
+          INNER JOIN (
+              SELECT ID_HOTEL, MAX(ID_IMG_HOTEL) AS MAX_ID_IMG_HOTEL
+              FROM TBL_IMAGENES_HOTELES
+              GROUP BY ID_HOTEL
+          ) AS MAX_IMG ON IH.ID_HOTEL = MAX_IMG.ID_HOTEL AND IH.ID_IMG_HOTEL = MAX_IMG.MAX_ID_IMG_HOTEL
+      ) AS LATEST_IMG ON H.ID_HOTEL = LATEST_IMG.ID_HOTEL
+      LEFT JOIN (
+          SELECT
+              ID_HOTEL,
+              COUNT(*) AS CANTIDAD_DISPONIBLES
+          FROM TBL_HABITACIONES
+          WHERE PUBLICACION_ACTIVA = TRUE AND RENTADA = FALSE
+          GROUP BY ID_HOTEL
+      ) AS HABITACIONES_DISPONIBLES ON H.ID_HOTEL = HABITACIONES_DISPONIBLES.ID_HOTEL
+      LEFT JOIN (
+          SELECT
+              ID_HOTEL,
+              STRING_AGG(DISTINCT LOWER(CARACTERISTICAS), ', ') AS CARACTERISTICAS
+          FROM TBL_HABITACIONES
+          WHERE PUBLICACION_ACTIVA = TRUE
+          GROUP BY ID_HOTEL
+      ) AS HABITACIONES ON H.ID_HOTEL = HABITACIONES.ID_HOTEL
+      WHERE H.AUTENTICADO = TRUE;
+    `;
     const result = await db.query(query);
     res.json(result);
   } catch (error) {
@@ -271,7 +280,7 @@ const mostrarCalificacionHotel = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Error al mostrar calificación del hotel" });
   }
-}
+};
 
 // Guardar calificación de un hotel
 const guardarCalificacionHotel = async (req, res) => {
@@ -283,11 +292,11 @@ const guardarCalificacionHotel = async (req, res) => {
       RETURNING *;
     `;
     const result = await db.query(query, [id_hotel, id_usuario, calificacion]);
-    res.json({ message: 'Calificación guardada', data: result });
+    res.json({ message: "Calificación guardada", data: result });
   } catch (error) {
     res.status(500).json({ error: "Error al guardar la calificación" });
   }
-}
+};
 
 export {
   registrarHotel,
@@ -298,5 +307,5 @@ export {
   cambiarEstadoHotel,
   actualizarContrasenia,
   mostrarCalificacionHotel,
-  guardarCalificacionHotel
+  guardarCalificacionHotel,
 };
